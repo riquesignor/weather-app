@@ -14,5 +14,6 @@ export default function TabLayout() {
       <AnimatedSplashOverlay />
       <AppTabs />
     </ThemeProvider>
+    //merdinha
   );
 }

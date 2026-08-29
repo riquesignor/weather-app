@@ -9,17 +9,18 @@ import { ThemedView } from '@/components/themed-view';
 import { CurrentWeatherCard } from '@/components/weather/current-weather-card';
 import { HourlyStrip } from '@/components/weather/hourly-strip';
 import { BottomTabInset, Spacing } from '@/constants/theme';
-import { currentConditions, currentLocation, hourlyForecast, severeAlert } from '@/lib/mock-weather';
+import { useWeather } from '@/providers/weather-provider';
 
 export default function HojeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [alertExpanded, setAlertExpanded] = useState(false);
+  const { locationName, current, hourlyForecast, alert } = useWeather();
 
   return (
     <ThemedView style={styles.container}>
       <LocationHeader
-        locationName={currentLocation.name}
+        locationName={locationName}
         onPressLocation={() => router.push('/locations')}
         onPressSettings={() => router.push('/settings')}
       />
@@ -27,14 +28,14 @@ export default function HojeScreen() {
         contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + BottomTabInset + Spacing.three }]}
         showsVerticalScrollIndicator={false}>
         <CurrentWeatherCard
-          temp={currentConditions.temp}
-          condition={currentConditions.condition}
-          conditionKind="cloudy"
-          feelsLike={currentConditions.feelsLike}
-          humidity={currentConditions.humidity}
-          windKmh={currentConditions.windKmh}
+          temp={current.temp}
+          condition={current.condition}
+          conditionKind={current.conditionKind}
+          feelsLike={current.feelsLike}
+          humidity={current.humidity}
+          windKmh={current.windKmh}
         />
-        <SevereAlertBanner alert={severeAlert} expanded={alertExpanded} onToggle={() => setAlertExpanded((v) => !v)} />
+        <SevereAlertBanner alert={alert} expanded={alertExpanded} onToggle={() => setAlertExpanded((v) => !v)} />
         <HourlyStrip data={hourlyForecast} onPressDetails={() => router.push('/hourly')} />
       </ScrollView>
     </ThemedView>

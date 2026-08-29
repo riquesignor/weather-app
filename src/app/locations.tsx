@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import { useState } from 'react';
-import { FlatList, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { ActivityIndicator, FlatList, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
@@ -9,44 +9,61 @@ import { ThemedView } from '@/components/themed-view';
 import { HIT_SLOP } from '@/constants/layout';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
-import { favoriteLocations, type FavoriteLocation } from '@/lib/mock-weather';
 import { conditionSymbol } from '@/lib/weather-icons';
+import { useWeather } from '@/providers/weather-provider';
 
 export default function LocationsScreen() {
   const theme = useTheme();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const [locations, setLocations] = useState<FavoriteLocation[]>(favoriteLocations);
+  const { favorites, searchLocations, selectLocation, addFavorite, removeFavorite } = useWeather();
   const [adding, setAdding] = useState(false);
   const [query, setQuery] = useState('');
+  const [searching, setSearching] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
 
-  function addLocation() {
+  async function addLocation() {
     const name = query.trim();
     if (!name) {
       setAdding(false);
       return;
     }
-    setLocations((prev) => [
-      ...prev,
-      { id: String(Date.now()), name, temp: 0, current: false, condition: 'clear', alertLabel: null },
-    ]);
-    setQuery('');
-    setAdding(false);
+    setSearching(true);
+    setSearchError(null);
+    try {
+      const results = await searchLocations(name);
+      const [match] = results;
+      if (!match) {
+        setSearchError('Nenhuma cidade encontrada com esse nome.');
+        return;
+      }
+      addFavorite(match);
+      setQuery('');
+      setAdding(false);
+    } catch {
+      setSearchError('Não foi possível buscar agora. Tente de novo.');
+    } finally {
+      setSearching(false);
+    }
   }
 
   function removeLocation(id: string) {
-    setLocations((prev) => prev.filter((loc) => loc.id !== id));
+    removeFavorite(id);
   }
 
   return (
     <ThemedView style={styles.container}>
       <FlatList
-        data={locations}
+        data={favorites}
         keyExtractor={(item) => item.id}
         contentContainerStyle={[styles.list, { paddingBottom: insets.bottom + Spacing.four }]}
         renderItem={({ item }) => (
           <Pressable
-            onPress={() => !item.current && router.back()}
+            onPress={() => {
+              if (item.current) return;
+              selectLocation({ id: item.id, name: item.name, latitude: item.latitude, longitude: item.longitude });
+              router.back();
+            }}
             style={[styles.row, { backgroundColor: theme.card, borderColor: theme.border }]}>
             <SymbolView
               name={
@@ -91,23 +108,42 @@ export default function LocationsScreen() {
         ListFooterComponent={
           <View style={styles.footer}>
             {adding ? (
-              <View style={[styles.addRow, { backgroundColor: theme.card, borderColor: theme.border }]}>
-                <TextInput
-                  value={query}
-                  onChangeText={setQuery}
-                  placeholder="Nome da cidade"
-                  placeholderTextColor={theme.textSecondary}
-                  style={[styles.input, { color: theme.text }]}
-                  autoFocus
-                  onSubmitEditing={addLocation}
-                  returnKeyType="done"
-                />
-                <Pressable onPress={addLocation} accessibilityRole="button">
-                  <ThemedText type="smallBold" style={{ color: theme.primary }}>
-                    Adicionar
+              <>
+                <View style={[styles.addRow, { backgroundColor: theme.card, borderColor: theme.border }]}>
+                  <TextInput
+                    value={query}
+                    onChangeText={(text) => {
+                      setQuery(text);
+                      if (searchError) setSearchError(null);
+                    }}
+                    placeholder="Nome da cidade"
+                    placeholderTextColor={theme.textSecondary}
+                    style={[styles.input, { color: theme.text }]}
+                    autoFocus
+                    editable={!searching}
+                    onSubmitEditing={addLocation}
+                    returnKeyType="done"
+                  />
+                  {searching ? (
+                    <ActivityIndicator size="small" color={theme.primary} />
+                  ) : (
+                    <Pressable onPress={addLocation} accessibilityRole="button">
+                      <ThemedText type="smallBold" style={{ color: theme.primary }}>
+                        Adicionar
+                      </ThemedText>
+                    </Pressable>
+                  )}
+                </View>
+                {searchError ? (
+                  <ThemedText type="small" style={{ color: theme.danger, marginTop: Spacing.two }}>
+                    {searchError}
                   </ThemedText>
-                </Pressable>
-              </View>
+                ) : (
+                  <ThemedText type="small" themeColor="textSecondary" style={styles.searchHint}>
+                    Busca via Open-Meteo Geocoding — funciona para cidades do mundo todo.
+                  </ThemedText>
+                )}
+              </>
             ) : (
               <Pressable
                 onPress={() => setAdding(true)}
@@ -181,5 +217,9 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 15,
+  },
+  searchHint: {
+    marginTop: Spacing.two,
+    paddingHorizontal: Spacing.one,
   },
 });

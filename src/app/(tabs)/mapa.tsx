@@ -7,18 +7,20 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
-import { currentLocation, mapHours, mapLayers } from '@/lib/mock-weather';
+import { mapHours, mapLayers } from '@/lib/mock-weather';
+import { useWeather } from '@/providers/weather-provider';
 
 export default function MapaScreen() {
   const router = useRouter();
   const theme = useTheme();
+  const { locationName } = useWeather();
   const [layer, setLayer] = useState<(typeof mapLayers)[number]>('Radar');
   const [hour, setHour] = useState<(typeof mapHours)[number]>('14h');
 
   return (
     <ThemedView style={styles.container}>
       <LocationHeader
-        locationName={currentLocation.name}
+        locationName={locationName}
         onPressLocation={() => router.push('/locations')}
         onPressSettings={() => router.push('/settings')}
       />

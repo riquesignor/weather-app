@@ -1,7 +1,12 @@
 /**
- * Dados mock — isolados aqui para que a Fase 2 (integração OpenWeatherMap + NOAA/INMET,
- * ver docs/weather_app_project_spec.md §6) troque estas constantes por chamadas de API
- * sem tocar nos componentes de UI.
+ * Tipos de domínio do app + dados de fallback (seed).
+ *
+ * A Fase 2 (integração de API real, ver docs/weather_app_project_spec.md §6) chegou:
+ * os dados ao vivo vêm agora de `@/providers/weather-provider` (Open-Meteo), que produz
+ * exatamente os tipos abaixo via `@/services/weather-transform`. Os componentes de UI
+ * não sabem a diferença. As constantes abaixo (`currentConditions`, `severeAlert`, etc.)
+ * seguem existindo como fallback: usadas enquanto a primeira resposta da API não chega,
+ * ou se a chamada de rede falhar completamente (ver `WeatherProvider`).
  */
 import type { WeatherCondition } from '@/lib/weather-icons';
 
@@ -32,17 +37,29 @@ export type SevereAlert = {
 export type FavoriteLocation = {
   id: string;
   name: string;
+  latitude: number;
+  longitude: number;
   temp: number;
   current: boolean;
   condition: WeatherCondition;
   alertLabel: string | null;
 };
 
+export type CurrentConditions = {
+  temp: number;
+  condition: string;
+  conditionKind: WeatherCondition;
+  feelsLike: number;
+  humidity: number;
+  windKmh: number;
+};
+
 export const currentLocation = { name: 'Brasília, DF' };
 
-export const currentConditions = {
+export const currentConditions: CurrentConditions = {
   temp: 31,
   condition: 'Parcialmente nublado',
+  conditionKind: 'partlyCloudy',
   feelsLike: 35,
   humidity: 65,
   windKmh: 18,
@@ -99,8 +116,26 @@ export const hourlyDetailed: HourlyDetail[] = [
 ];
 
 export const favoriteLocations: FavoriteLocation[] = [
-  { id: '1', name: 'Brasília, DF', temp: 31, current: true, condition: 'cloudy', alertLabel: 'Tornado Watch' },
-  { id: '2', name: 'São Paulo, SP', temp: 24, current: false, condition: 'rain', alertLabel: null },
+  {
+    id: '1',
+    name: 'Brasília, DF',
+    latitude: -15.7797,
+    longitude: -47.9297,
+    temp: 31,
+    current: true,
+    condition: 'cloudy',
+    alertLabel: 'Tornado Watch',
+  },
+  {
+    id: '2',
+    name: 'São Paulo, SP',
+    latitude: -23.5505,
+    longitude: -46.6333,
+    temp: 24,
+    current: false,
+    condition: 'rain',
+    alertLabel: null,
+  },
 ];
 
 export const mapLayers = ['Radar', 'Alertas', 'Locais'] as const;

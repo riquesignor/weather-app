@@ -32,6 +32,12 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
         }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "O Weather usa sua localização para mostrar a previsão e os alertas do lugar onde você está."
+        }
       ]
     ],
     "experiments": {

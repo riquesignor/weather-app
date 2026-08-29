@@ -6,12 +6,13 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { SeverityColor, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
-import { hourlyDetailed } from '@/lib/mock-weather';
 import { conditionSymbol } from '@/lib/weather-icons';
+import { useWeather } from '@/providers/weather-provider';
 
 export default function HourlyScreen() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
+  const { hourlyDetailed } = useWeather();
 
   return (
     <ThemedView style={styles.container}>

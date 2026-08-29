@@ -7,16 +7,17 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
-import { currentLocation } from '@/lib/mock-weather';
+import { useWeather } from '@/providers/weather-provider';
 
 export default function SemanalScreen() {
   const router = useRouter();
   const theme = useTheme();
+  const { locationName } = useWeather();
 
   return (
     <ThemedView style={styles.container}>
       <LocationHeader
-        locationName={currentLocation.name}
+        locationName={locationName}
         onPressLocation={() => router.push('/locations')}
         onPressSettings={() => router.push('/settings')}
       />

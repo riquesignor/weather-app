@@ -12,6 +12,7 @@ const TAB_ICONS: Record<string, SymbolViewProps['name']> = {
   semanal: { ios: 'calendar', android: 'calendar_month', web: 'calendar_month' },
   alertas: { ios: 'exclamationmark.triangle.fill', android: 'warning', web: 'warning' },
   mapa: { ios: 'map.fill', android: 'map', web: 'map' },
+  cultivo: { ios: 'leaf.fill', android: 'eco', web: 'eco' },
 };
 
 export default function AppTabs() {
@@ -31,6 +32,9 @@ export default function AppTabs() {
           </TabTrigger>
           <TabTrigger name="mapa" href="/mapa" asChild>
             <TabButton icon="mapa">Mapa</TabButton>
+          </TabTrigger>
+          <TabTrigger name="cultivo" href="/cultivo" asChild>
+            <TabButton icon="cultivo">Cultivo</TabButton>
           </TabTrigger>
         </CustomTabList>
       </TabList>

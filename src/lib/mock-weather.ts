@@ -140,3 +140,53 @@ export const favoriteLocations: FavoriteLocation[] = [
 
 export const mapLayers = ['Radar', 'Alertas', 'Locais'] as const;
 export const mapHours = ['14h', '15h', '16h', '17h', '18h'] as const;
+
+export type DailyForecastPoint = {
+  date: string;
+  dayLabel: string;
+  condition: WeatherCondition;
+  conditionLabel: string;
+  tempMax: number;
+  tempMin: number;
+  precipitation: number;
+  windKmh: number;
+};
+
+/** Fallback dos 7 dias (spec §2.4 "Semanal") — usado até a 1ª resposta da API chegar. */
+export const dailyForecast: DailyForecastPoint[] = [
+  { date: '', dayLabel: 'Hoje', condition: 'partlyCloudy', conditionLabel: 'Parcialmente nublado', tempMax: 31, tempMin: 22, precipitation: 30, windKmh: 18 },
+  { date: '', dayLabel: 'Seg', condition: 'cloudy', conditionLabel: 'Nublado', tempMax: 28, tempMin: 21, precipitation: 60, windKmh: 22 },
+  { date: '', dayLabel: 'Ter', condition: 'rain', conditionLabel: 'Chuva fraca', tempMax: 25, tempMin: 19, precipitation: 80, windKmh: 28 },
+  { date: '', dayLabel: 'Qua', condition: 'rain', conditionLabel: 'Chuva moderada', tempMax: 24, tempMin: 18, precipitation: 70, windKmh: 20 },
+  { date: '', dayLabel: 'Qui', condition: 'partlyCloudy', conditionLabel: 'Parcialmente nublado', tempMax: 27, tempMin: 20, precipitation: 20, windKmh: 15 },
+  { date: '', dayLabel: 'Sex', condition: 'clear', conditionLabel: 'Céu limpo', tempMax: 29, tempMin: 21, precipitation: 5, windKmh: 12 },
+  { date: '', dayLabel: 'Sáb', condition: 'clear', conditionLabel: 'Céu limpo', tempMax: 30, tempMin: 22, precipitation: 5, windKmh: 14 },
+];
+
+export type WeatherDetails = {
+  uvIndex: number;
+  uvLabel: string;
+  visibilityKm: number;
+  dewPoint: number;
+  pressure: number;
+  windDirection: number;
+  windDirectionLabel: string;
+  aqi: number | null;
+  aqiLabel: string;
+};
+
+/**
+ * Fallback do card "Detalhes" (índice UV, qualidade do ar, vento, ponto de orvalho,
+ * pressão, visibilidade — item inspirado na referência de app anexada pelo usuário).
+ */
+export const weatherDetails: WeatherDetails = {
+  uvIndex: 6,
+  uvLabel: 'Alto',
+  visibilityKm: 10,
+  dewPoint: 22,
+  pressure: 1013,
+  windDirection: 135,
+  windDirectionLabel: 'SE',
+  aqi: 42,
+  aqiLabel: 'Moderado',
+};

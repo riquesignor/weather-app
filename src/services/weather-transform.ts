@@ -3,13 +3,15 @@
  * consome (definidos em `@/lib/mock-weather`). Nenhum componente de tela precisa
  * mudar por causa da troca mock → API real — só a origem dos dados muda.
  */
-import type { CurrentConditions, HourlyDetail, HourlyPoint, SeverityLevel } from '@/lib/mock-weather';
+import type { CurrentConditions, DailyForecastPoint, HourlyDetail, HourlyPoint, SeverityLevel } from '@/lib/mock-weather';
 import type { OpenMeteoForecastResponse } from '@/services/open-meteo';
 import { deriveSevereAlert, findCurrentHourIndex } from '@/services/severe-alert';
 import { interpretWeatherCode } from '@/services/weather-codes';
 
 const HOURLY_STRIP_COUNT = 10;
 const HOURLY_DETAIL_COUNT = 6;
+const DAILY_COUNT = 7;
+const WEEKDAY_LABELS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 
 /** Limiares de rajada (km/h) usados só para colorir o badge "Risco de tornado" da
  * tela de previsão detalhada — a Open-Meteo não detecta tornados, é um proxy visual
@@ -76,11 +78,36 @@ export function toHourlyDetailed(resp: OpenMeteoForecastResponse, startIndex: nu
   return details;
 }
 
+/** Previsão dos próximos dias (seção Semanal) — 1 linha por dia, "Hoje" + até 6 seguintes. */
+export function toDailyForecast(resp: OpenMeteoForecastResponse, count = DAILY_COUNT): DailyForecastPoint[] {
+  const { daily } = resp;
+  if (!daily?.time?.length) return [];
+
+  const end = Math.min(count, daily.time.length);
+  const points: DailyForecastPoint[] = [];
+  for (let i = 0; i < end; i++) {
+    const info = interpretWeatherCode(daily.weather_code[i]);
+    const date = new Date(`${daily.time[i]}T12:00:00`);
+    points.push({
+      date: daily.time[i],
+      dayLabel: i === 0 ? 'Hoje' : WEEKDAY_LABELS[date.getDay()],
+      condition: info.condition,
+      conditionLabel: info.label,
+      tempMax: Math.round(daily.temperature_2m_max[i]),
+      tempMin: Math.round(daily.temperature_2m_min[i]),
+      precipitation: Math.round(daily.precipitation_probability_max[i]),
+      windKmh: Math.round(daily.wind_speed_10m_max[i]),
+    });
+  }
+  return points;
+}
+
 export type TransformedWeather = {
   current: CurrentConditions;
   hourlyForecast: HourlyPoint[];
   hourlyDetailed: HourlyDetail[];
   alert: ReturnType<typeof deriveSevereAlert>;
+  dailyForecast: DailyForecastPoint[];
 };
 
 /** Ponto único de entrada: aplica todos os transforms acima a partir de uma resposta crua. */
@@ -91,5 +118,6 @@ export function transformForecast(resp: OpenMeteoForecastResponse): TransformedW
     hourlyForecast: toHourlyForecast(resp, startIndex),
     hourlyDetailed: toHourlyDetailed(resp, startIndex),
     alert: deriveSevereAlert(resp.hourly, startIndex),
+    dailyForecast: toDailyForecast(resp),
   };
 }

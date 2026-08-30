@@ -16,17 +16,22 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import {
   currentConditions as fallbackCurrentConditions,
   currentLocation as fallbackLocation,
+  dailyForecast as fallbackDailyForecast,
   favoriteLocations as seedFavorites,
   hourlyDetailed as fallbackHourlyDetailed,
   hourlyForecast as fallbackHourlyForecast,
   severeAlert as fallbackAlert,
+  weatherDetails as fallbackWeatherDetails,
   type CurrentConditions,
+  type DailyForecastPoint,
   type FavoriteLocation,
   type HourlyDetail,
   type HourlyPoint,
   type SevereAlert,
+  type WeatherDetails,
 } from '@/lib/mock-weather';
 import {
+  fetchAirQuality,
   fetchForecast,
   fetchForecastBatch,
   searchLocations,
@@ -36,6 +41,7 @@ import {
 } from '@/services/open-meteo';
 import { deriveSevereAlert, findCurrentHourIndex } from '@/services/severe-alert';
 import { transformForecast } from '@/services/weather-transform';
+import { toWeatherDetails } from '@/services/weather-details';
 import { useLocationPermission } from '@/hooks/use-location-permission';
 
 const CACHE_TTL_MS = 5 * 60 * 1000;
@@ -62,10 +68,13 @@ type WeatherContextValue = {
   status: 'loading' | 'ready' | 'error';
   errorMessage?: string;
   locationName: string;
+  coordinates: Coordinates;
   current: CurrentConditions;
   hourlyForecast: HourlyPoint[];
   hourlyDetailed: HourlyDetail[];
   alert: SevereAlert;
+  dailyForecast: DailyForecastPoint[];
+  details: WeatherDetails;
   favorites: FavoriteLocation[];
   searchLocations: (query: string) => Promise<GeocodingResult[]>;
   refresh: () => void;
@@ -100,12 +109,16 @@ export function WeatherProvider({ children }: { children: ReactNode }) {
     hourlyForecast: HourlyPoint[];
     hourlyDetailed: HourlyDetail[];
     alert: SevereAlert;
+    dailyForecast: DailyForecastPoint[];
+    details: WeatherDetails;
   }>({
     status: 'loading',
     current: fallbackCurrentConditions,
     hourlyForecast: fallbackHourlyForecast,
     hourlyDetailed: fallbackHourlyDetailed,
     alert: fallbackAlert,
+    dailyForecast: fallbackDailyForecast,
+    details: fallbackWeatherDetails,
   });
 
   const [favoritesData, setFavoritesData] = useState<FavoriteLocation[]>(seedFavorites);
@@ -132,8 +145,20 @@ export function WeatherProvider({ children }: { children: ReactNode }) {
       try {
         const resp = await fetchForecastCached({ latitude: active.latitude, longitude: active.longitude });
         const transformed = transformForecast(resp);
+        const startIndex = findCurrentHourIndex(resp.hourly, resp.current.time);
+
+        // Qualidade do ar é um "nice to have" do card Detalhes — roda em paralelo e não
+        // deve derrubar a tela principal se essa API falhar (ela é separada da de previsão).
+        let details: WeatherDetails;
+        try {
+          const air = await fetchAirQuality({ latitude: active.latitude, longitude: active.longitude });
+          details = toWeatherDetails(resp, startIndex, air);
+        } catch {
+          details = toWeatherDetails(resp, startIndex, null);
+        }
+
         if (cancelled || requestId.current !== myRequest) return;
-        setWeather({ status: 'ready', ...transformed });
+        setWeather({ status: 'ready', ...transformed, details });
       } catch (error) {
         if (cancelled || requestId.current !== myRequest) return;
         setWeather({
@@ -143,6 +168,8 @@ export function WeatherProvider({ children }: { children: ReactNode }) {
           hourlyForecast: fallbackHourlyForecast,
           hourlyDetailed: fallbackHourlyDetailed,
           alert: fallbackAlert,
+          dailyForecast: fallbackDailyForecast,
+          details: fallbackWeatherDetails,
         });
       }
     }
@@ -221,10 +248,13 @@ export function WeatherProvider({ children }: { children: ReactNode }) {
       status: weather.status,
       errorMessage: weather.errorMessage,
       locationName: active.name || fallbackLocation.name,
+      coordinates: { latitude: active.latitude, longitude: active.longitude },
       current: weather.current,
       hourlyForecast: weather.hourlyForecast,
       hourlyDetailed: weather.hourlyDetailed,
       alert: weather.alert,
+      dailyForecast: weather.dailyForecast,
+      details: weather.details,
       favorites: favoritesData,
       searchLocations,
       refresh,
@@ -232,7 +262,7 @@ export function WeatherProvider({ children }: { children: ReactNode }) {
       addFavorite,
       removeFavorite,
     }),
-    [weather, active.name, favoritesData, refresh, selectLocation, addFavorite, removeFavorite]
+    [weather, active.name, active.latitude, active.longitude, favoritesData, refresh, selectLocation, addFavorite, removeFavorite]
   );
 
   return <WeatherContext.Provider value={value}>{children}</WeatherContext.Provider>;

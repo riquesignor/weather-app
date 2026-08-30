@@ -8,26 +8,39 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useNotificationSettings } from '@/providers/notification-settings-provider';
+import { useThemeMode } from '@/providers/theme-mode-provider';
 
-type Volume = 'baixa' | 'media' | 'alta';
 type UpdateFrequency = '15' | '30' | '60';
-type ThemeMode = 'auto' | 'light' | 'dark';
 
 export default function SettingsScreen() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
 
-  const [notifSevero, setNotifSevero] = useState(true);
-  const [notifGranizo, setNotifGranizo] = useState(true);
-  const [notifTornado, setNotifTornado] = useState(true);
-  const [notifRajadas, setNotifRajadas] = useState(true);
-  const [volume, setVolume] = useState<Volume>('alta');
+  // Grupo funcional de ponta a ponta: estes toggles são lidos por
+  // `use-severe-alert-notifications.ts` pra decidir se um alerta ativo vira notificação
+  // de verdade (local — ver observação enviada junto com esta entrega sobre push real).
+  const {
+    notifSevero,
+    setNotifSevero,
+    notifGranizo,
+    setNotifGranizo,
+    notifTornado,
+    setNotifTornado,
+    notifRajadas,
+    setNotifRajadas,
+    volume,
+    setVolume,
+  } = useNotificationSettings();
 
   const [locContinua, setLocContinua] = useState(true);
   const [frequency, setFrequency] = useState<UpdateFrequency>('30');
   const [dadosAnonimos, setDadosAnonimos] = useState(true);
 
-  const [themeMode, setThemeMode] = useState<ThemeMode>('auto');
+  // Único grupo aqui que já é 100% funcional de ponta a ponta: muda o app inteiro via
+  // `ThemeModeProvider` (ver `@/providers/theme-mode-provider`). Os demais toggles desta
+  // tela ainda são só estado local — ver observação enviada junto com esta entrega.
+  const { mode: themeMode, setMode: setThemeMode } = useThemeMode();
 
   return (
     <ThemedView style={styles.container}>

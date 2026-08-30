@@ -8,6 +8,7 @@ import { LocationHeader } from '@/components/common/location-header';
 import { ThemedView } from '@/components/themed-view';
 import { CurrentWeatherCard } from '@/components/weather/current-weather-card';
 import { HourlyStrip } from '@/components/weather/hourly-strip';
+import { WeatherDetailsGrid } from '@/components/weather/weather-details-grid';
 import { BottomTabInset, Spacing } from '@/constants/theme';
 import { useWeather } from '@/providers/weather-provider';
 
@@ -15,7 +16,7 @@ export default function HojeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [alertExpanded, setAlertExpanded] = useState(false);
-  const { locationName, current, hourlyForecast, alert } = useWeather();
+  const { locationName, current, hourlyForecast, alert, details } = useWeather();
 
   return (
     <ThemedView style={styles.container}>
@@ -37,6 +38,7 @@ export default function HojeScreen() {
         />
         <SevereAlertBanner alert={alert} expanded={alertExpanded} onToggle={() => setAlertExpanded((v) => !v)} />
         <HourlyStrip data={hourlyForecast} onPressDetails={() => router.push('/hourly')} />
+        <WeatherDetailsGrid details={details} />
       </ScrollView>
     </ThemedView>
   );

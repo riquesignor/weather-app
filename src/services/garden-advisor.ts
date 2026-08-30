@@ -6,10 +6,17 @@
  * aos dados reais da Open-Meteo. Mesmo espírito de `activity-advisor.ts`: heurística
  * local sobre dado real, não uma chamada de rede a mais.
  */
-import type { CurrentConditions } from '@/lib/mock-weather';
+import type { CurrentConditions, DailyForecastPoint } from '@/lib/mock-weather';
 
 export type PlantingSuggestion = { title: string; subtitle: string };
 export type PlantCalendarEntry = { name: string; plant: boolean };
+export type WeeklyPlantingDay = {
+  dayLabel: string;
+  goodForPlanting: boolean;
+  goodForWatering: boolean;
+  suitablePlants: string[];
+  note: string;
+};
 
 type PlantProfile = { name: string; minTemp: number; maxTemp: number };
 
@@ -63,6 +70,36 @@ export function derivePlantingSuggestion(current: CurrentConditions): PlantingSu
     title: 'Dia neutro para plantio',
     subtitle: `${current.temp}°, ${current.humidity}% de umidade — condições dentro do normal.`,
   };
+}
+
+/**
+ * Item #5 do feedback ("a tela de cultivo precisa dar uma enchida"): em vez de só olhar
+ * a temperatura de agora, usa a previsão de 7 dias (`dailyForecast`, ver
+ * `weather-transform.ts`) pra apontar quais dias da semana são melhores pra plantar —
+ * mesma heurística de faixa ideal por espécie, aplicada dia a dia.
+ */
+export function getWeeklyPlantingPlan(daily: DailyForecastPoint[]): WeeklyPlantingDay[] {
+  return daily.map((day) => {
+    const avgTemp = (day.tempMax + day.tempMin) / 2;
+    const suitable = PLANT_PROFILES.filter((p) => avgTemp >= p.minTemp && avgTemp <= p.maxTemp).map((p) => p.name);
+    const rainy = day.precipitation >= 60;
+    const windy = day.windKmh >= 40;
+    const goodForPlanting = suitable.length > 0 && !rainy && !windy;
+    const goodForWatering = day.precipitation < 40; // chuva forte já rega por conta própria
+
+    let note: string;
+    if (rainy) {
+      note = `Chuva provável (${day.precipitation}%) — não é o melhor dia pra mexer na terra.`;
+    } else if (windy) {
+      note = `Vento forte (${day.windKmh} km/h) — evite transplantar mudas novas.`;
+    } else if (suitable.length > 0) {
+      note = `~${Math.round(avgTemp)}° — bom pra ${suitable.slice(0, 2).join(' e ').toLowerCase()}.`;
+    } else {
+      note = `~${Math.round(avgTemp)}° — fora da faixa ideal das espécies acompanhadas.`;
+    }
+
+    return { dayLabel: day.dayLabel, goodForPlanting, goodForWatering, suitablePlants: suitable, note };
+  });
 }
 
 const TIPS_HOT = 'Em dias quentes, regar no início da manhã ou fim da tarde reduz a evaporação e economiza água.';

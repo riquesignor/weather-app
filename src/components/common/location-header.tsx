@@ -1,5 +1,6 @@
 import { SymbolView } from 'expo-symbols';
 import { Pressable, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
 import { HIT_SLOP } from '@/constants/layout';
@@ -14,9 +15,13 @@ type LocationHeaderProps = {
 
 export function LocationHeader({ locationName, onPressLocation, onPressSettings }: LocationHeaderProps) {
   const theme = useTheme();
+  // A Stack raiz roda com headerShown:false (o header é este componente), então
+  // sem isso o conteúdo fica embaixo da status bar/notch em qualquer Android real —
+  // no navegador/emulador a barra de status não ocupa espaço, por isso passou batido.
+  const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.row, { backgroundColor: theme.card }]}>
+    <View style={[styles.row, { backgroundColor: theme.card, paddingTop: insets.top + Spacing.two }]}>
       <Pressable
         onPress={onPressLocation}
         style={styles.locationButton}
@@ -60,7 +65,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.three,
-    paddingTop: Spacing.three,
     paddingBottom: Spacing.two,
   },
   locationButton: {

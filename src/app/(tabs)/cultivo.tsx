@@ -8,12 +8,12 @@ import { LocationHeader } from '@/components/common/location-header';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { BottomTabInset, Spacing } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useGardenLog } from '@/hooks/use-garden-log';
 import { useTheme } from '@/hooks/use-theme';
+import { useThemeMode } from '@/providers/theme-mode-provider';
 import { useWeather } from '@/providers/weather-provider';
 import { deriveActivitySuggestion } from '@/services/activity-advisor';
-import { derivePlantingSuggestion, getCultivoTip, getPlantCalendar } from '@/services/garden-advisor';
+import { derivePlantingSuggestion, getCultivoTip, getPlantCalendar, getWeeklyPlantingPlan } from '@/services/garden-advisor';
 
 /**
  * Paleta das duas cards "hero" (ilustração de céu/horta) — não vêm do design system
@@ -66,11 +66,11 @@ const HERO_PALETTE = {
 export default function CultivoScreen() {
   const router = useRouter();
   const theme = useTheme();
-  const scheme = useColorScheme();
-  const palette = scheme === 'dark' ? HERO_PALETTE.dark : HERO_PALETTE.light;
+  const { colorScheme } = useThemeMode();
+  const palette = colorScheme === 'dark' ? HERO_PALETTE.dark : HERO_PALETTE.light;
   const insets = useSafeAreaInsets();
 
-  const { locationName, current, hourlyForecast } = useWeather();
+  const { locationName, current, hourlyForecast, dailyForecast } = useWeather();
   const { tasks, plants, activityStreak, activityLoggedToday, gardenLoggedToday, toggleTask, logActivity, logGarden } =
     useGardenLog();
 
@@ -78,6 +78,8 @@ export default function CultivoScreen() {
   const planting = derivePlantingSuggestion(current);
   const calendar = getPlantCalendar(current);
   const tip = getCultivoTip(current);
+  const weeklyPlan = getWeeklyPlantingPlan(dailyForecast);
+  const bestDay = weeklyPlan.find((d) => d.goodForPlanting) ?? null;
 
   return (
     <ThemedView style={styles.container}>
@@ -172,6 +174,32 @@ export default function CultivoScreen() {
               </View>
             ))}
           </View>
+        </View>
+
+        <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <ThemedText type="smallBold" style={styles.cardTitle}>
+            Melhores dias da semana pra plantar
+          </ThemedText>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.weekScroll}>
+            {weeklyPlan.map((day, index) => (
+              <View
+                key={`${day.dayLabel}-${index}`}
+                style={[
+                  styles.weekDay,
+                  { backgroundColor: day.goodForPlanting ? palette.chipPlantBg : theme.backgroundElement },
+                ]}>
+                <ThemedText type="smallBold">{day.dayLabel}</ThemedText>
+                <ThemedText style={styles.weekDayIcon}>
+                  {day.goodForPlanting ? '🌱' : day.goodForWatering ? '💧' : '—'}
+                </ThemedText>
+              </View>
+            ))}
+          </ScrollView>
+          <ThemedText type="small" themeColor="textSecondary" style={styles.weekNote}>
+            {bestDay
+              ? `${bestDay.dayLabel}: ${bestDay.note}`
+              : 'Nenhum dia ideal pra plantio nos próximos 7 dias — foque em regar e adubar o que já está no canteiro.'}
+          </ThemedText>
         </View>
 
         <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
@@ -292,6 +320,24 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.one + 2,
     paddingHorizontal: Spacing.two + 2,
     borderRadius: 10,
+  },
+  weekScroll: {
+    gap: Spacing.two,
+    paddingBottom: Spacing.one,
+  },
+  weekDay: {
+    width: 52,
+    alignItems: 'center',
+    gap: 4,
+    paddingVertical: Spacing.two,
+    borderRadius: 12,
+  },
+  weekDayIcon: {
+    fontSize: 16,
+  },
+  weekNote: {
+    marginTop: Spacing.two,
+    lineHeight: 18,
   },
   taskRow: {
     flexDirection: 'row',

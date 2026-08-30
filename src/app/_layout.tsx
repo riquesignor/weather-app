@@ -1,17 +1,27 @@
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useColorScheme } from 'react-native';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
+import { useSevereAlertNotifications } from '@/hooks/use-severe-alert-notifications';
+import { NotificationSettingsProvider } from '@/providers/notification-settings-provider';
+import { ThemeModeProvider, useThemeMode } from '@/providers/theme-mode-provider';
 import { WeatherProvider } from '@/providers/weather-provider';
 
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
+function AlertNotificationsBridge() {
+  // Precisa estar dentro do WeatherProvider (lê `alert`) e do NotificationSettingsProvider
+  // (lê os toggles) — não renderiza nada, só liga o efeito colateral de notificação.
+  useSevereAlertNotifications();
+  return null;
+}
+
+function RootLayoutNav() {
+  const { colorScheme } = useThemeMode();
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <WeatherProvider>
+        <AlertNotificationsBridge />
         <AnimatedSplashOverlay />
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="(tabs)" />
@@ -21,5 +31,15 @@ export default function RootLayout() {
         </Stack>
       </WeatherProvider>
     </ThemeProvider>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <ThemeModeProvider>
+      <NotificationSettingsProvider>
+        <RootLayoutNav />
+      </NotificationSettingsProvider>
+    </ThemeModeProvider>
   );
 }

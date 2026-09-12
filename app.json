@@ -30,7 +30,10 @@
     },
     "plugins": [
       "expo-router",
+<<<<<<< HEAD
       "expo-notifications",
+=======
+>>>>>>> 0a4a74a33a7bae7495e9c48fb9531725d6ae783b
       [
         "expo-splash-screen",
         {

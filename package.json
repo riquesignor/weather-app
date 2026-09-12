@@ -13,7 +13,11 @@
     "expo-linear-gradient": "~57.0.1",
     "expo-linking": "~57.0.7",
     "expo-location": "~57.0.14",
+<<<<<<< HEAD
     "expo-notifications": "~57.0.17",
+=======
+    "expo-notifications": "^0.32.17",
+>>>>>>> 0a4a74a33a7bae7495e9c48fb9531725d6ae783b
     "expo-router": "~57.0.15",
     "expo-splash-screen": "~57.0.7",
     "expo-status-bar": "~57.0.1",

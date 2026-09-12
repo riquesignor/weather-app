@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+</style>
+</helmet>
+
+<div style="min-height:100vh;width:100%;background:#EDEFF2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:56px 24px;">
+  <div style="display:flex;gap:4px;background:#FFFFFF;padding:4px;border-radius:14px;border:1px solid #E0E2E7;">
+    <sc-for list="{{ flowTabs }}" as="ft" hint-placeholder-count="4">
+      <sc-if value="{{ ft.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ ft.select }}" style="padding:8px 14px;border:none;border-radius:10px;background:#1E88E5;color:#fff;font-size:12.5px;font-weight:700;font-family:inherit;cursor:pointer;">{{ ft.label }}</button></sc-if>
+      <sc-if value="{{ ft.notActive }}" hint-placeholder-val="{{ true }}"><button onClick="{{ ft.select }}" style="padding:8px 14px;border:none;border-radius:10px;background:transparent;color:#6B7280;font-size:12.5px;font-weight:600;font-family:inherit;cursor:pointer;">{{ ft.label }}</button></sc-if>
+    </sc-for>
+  </div>
+
+  <div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;justify-content:center;">
+  <x-import component-from-global-scope="AndroidDevice" from="./android-frame.jsx" dark="{{ isDark }}" hint-size="412,892" style="flex-shrink:0;">
+
+    <sc-if value="{{ isMain }}" hint-placeholder-val="{{ true }}">
+      <sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;min-height:100%;background:#FAFAFA;font-family:'Inter',system-ui,sans-serif;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 20px 16px;background:#FFFFFF;">
+            <button onClick="{{ openLocations }}" style="all:unset;cursor:pointer;display:flex;align-items:center;gap:8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 21s7-6.8 7-12.4A7 7 0 1 0 5 8.6C5 14.2 12 21 12 21Z" stroke="#1E88E5" strokeWidth="2" strokeLinejoin="round"/><circle cx="12" cy="8.6" r="2.4" fill="#1E88E5"/></svg>
+              <div>
+                <div style="font-size:11px;color:#6B7280;font-weight:600;letter-spacing:0.4px;text-transform:uppercase;">Localização atual</div>
+                <div style="font-size:17px;color:#1A1A1A;font-weight:700;">Brasília, DF</div>
+              </div>
+            </button>
+            <button onClick="{{ openSettings }}" style="width:40px;height:40px;border-radius:20px;background:#F0F0F3;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 7h9M17 7h3M4 17h3M11 17h9" stroke="#1A1A1A" strokeWidth="2" strokeLinecap="round"/><circle cx="13" cy="7" r="2.6" fill="#F0F0F3" stroke="#1A1A1A" strokeWidth="2"/><circle cx="7" cy="17" r="2.6" fill="#F0F0F3" stroke="#1A1A1A" strokeWidth="2"/></svg>
+            </button>
+          </div>
+
+          <sc-if value="{{ tabHoje }}" hint-placeholder-val="{{ true }}">
+          <div style="margin:0 20px 16px;padding:24px 24px 20px;border-radius:28px;background:#FFFFFF;boxShadow:0 1px 3px rgba(20,20,30,0.06);border:1px solid #E7E8EC;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div>
+                <div style="font-size:13px;color:#6B7280;margin-bottom:4px;font-weight:500;">Agora mesmo</div>
+                <div style="display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;">
+                  <span style="font-size:52px;font-weight:800;color:#1A1A1A;line-height:1;">31°</span>
+                </div>
+                <div style="font-size:15px;color:#6B7280;font-weight:600;margin-top:2px;">Parcialmente nublado</div>
+              </div>
+              <svg width="56" height="56" viewBox="0 0 64 64"><circle cx="23" cy="23" r="12" fill="#FBC02D"/><ellipse cx="37" cy="40" rx="19" ry="13" fill="#FFFFFF" stroke="#E0E4E8" strokeWidth="1.5"/><ellipse cx="24" cy="36" rx="13" ry="10" fill="#FFFFFF" stroke="#E0E4E8" strokeWidth="1.5"/></svg>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:20px;padding-top:16px;borderTop:1px solid #E7E8EC;">
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="10" y="3" width="4" height="11" rx="2" stroke="#6B7280" strokeWidth="2"/><circle cx="12" cy="18" r="3.4" fill="#6B7280"/></svg>
+                <span style="font-size:11px;color:#6B7280;font-weight:500;">Sensação</span>
+                <span style="font-size:14px;color:#1A1A1A;font-weight:700;">35°</span>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;">
+                <svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 3s7 8.2 7 13a7 7 0 1 1-14 0c0-4.8 7-13 7-13Z" fill="#6B7280"/></svg>
+                <span style="font-size:11px;color:#6B7280;font-weight:500;">Umidade</span>
+                <span style="font-size:14px;color:#1A1A1A;font-weight:700;">65%</span>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 8h10.5a2.75 2.75 0 1 0-2.75-2.75" stroke="#6B7280" strokeWidth="2" strokeLinecap="round"/><path d="M3 13.5h14a2.75 2.75 0 1 1-2.75 2.75" stroke="#6B7280" strokeWidth="2" strokeLinecap="round"/></svg>
+                <span style="font-size:11px;color:#6B7280;font-weight:500;">Vento</span>
+                <span style="font-size:14px;color:#1A1A1A;font-weight:700;">18 km/h</span>
+              </div>
+            </div>
+          </div>
+
+          <button onClick="{{ toggleAlert }}" style="all:unset;display:block;cursor:pointer;margin:0 20px 16px;padding:16px 18px;border-radius:20px;background:#FDECEA;border:1px solid rgba(211,47,47,0.25);">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 3 22.5 21H1.5Z" fill="#D32F2F"/><rect x="10.8" y="9.2" width="2.4" height="5.6" rx="1.2" fill="#fff"/><circle cx="12" cy="17" r="1.3" fill="#fff"/></svg>
+              <div style="flex:1;">
+                <div style="font-size:14px;font-weight:800;color:#D32F2F;">Aviso de Tornado</div>
+                <div style="font-size:12px;color:#6B7280;margin-top:1px;font-weight:500;">Vigília ativa · próximas 3h</div>
+              </div>
+              <sc-if value="{{ alertClosed }}" hint-placeholder-val="{{ true }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#D32F2F" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"/></svg></sc-if>
+              <sc-if value="{{ alertOpen }}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="transform:rotate(180deg)"><path d="M6 9l6 6 6-6" stroke="#D32F2F" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"/></svg></sc-if>
+            </div>
+            <sc-if value="{{ alertOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:14px;padding-top:14px;borderTop:1px solid rgba(211,47,47,0.2);display:flex;flex-direction:column;gap:10px;">
+                <div style="display:flex;gap:8px;">
+                  <div style="flex:1;background:#ffffffaa;borderRadius:12px;padding:8px;text-align:center;">
+                    <div style="font-size:10px;color:#6B7280;font-weight:600;">PROBABILIDADE</div>
+                    <div style="font-size:14px;color:#1A1A1A;font-weight:800;margin-top:2px;">85%</div>
+                  </div>
+                  <div style="flex:1;background:#ffffffaa;borderRadius:12px;padding:8px;text-align:center;">
+                    <div style="font-size:10px;color:#6B7280;font-weight:600;">VENTO</div>
+                    <div style="font-size:14px;color:#1A1A1A;font-weight:800;margin-top:2px;">70 km/h</div>
+                  </div>
+                  <div style="flex:1;background:#ffffffaa;borderRadius:12px;padding:8px;text-align:center;">
+                    <div style="font-size:10px;color:#6B7280;font-weight:600;">GRANIZO</div>
+                    <div style="font-size:14px;color:#1A1A1A;font-weight:800;margin-top:2px;">Sim</div>
+                  </div>
+                </div>
+                <div style="font-size:12.5px;color:#5A4340;lineHeight:1.5;text-align:left;">Evite áreas abertas e proteja objetos soltos até o fim da vigência.</div>
+              </div>
+            </sc-if>
+          </button>
+
+          <div style="padding:0 20px 4px;">
+            <div style="font-size:12px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;">Próximas 24 horas</div>
+            <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:16px;">
+              <div style="flex:0 0 62px;display:flex;flex-direction:column;align-items:center;gap:7px;padding:14px 6px;border-radius:16px;background:#F0F0F3;">
+                <span style="font-size:12px;color:#6B7280;font-weight:700;">14h</span>
+                <svg width="20" height="20" viewBox="0 0 24 24"><ellipse cx="13" cy="15" rx="8" ry="6" fill="#9AA1AC"/><ellipse cx="8" cy="13" rx="5" ry="4.2" fill="#9AA1AC"/></svg>
+                <span style="font-size:14px;font-weight:800;color:#1A1A1A;">29°</span>
+                <div style="width:100%;height:4px;border-radius:2px;background:#E0E1E6;"><div style="width:60%;height:100%;border-radius:2px;background:#1E88E5;"></div></div>
+                <span style="font-size:10px;color:#6B7280;font-weight:600;">60%</span>
+              </div>
+              <div style="flex:0 0 62px;display:flex;flex-direction:column;align-items:center;gap:7px;padding:14px 6px;border-radius:16px;background:#F0F0F3;">
+                <span style="font-size:12px;color:#6B7280;font-weight:700;">15h</span>
+                <svg width="20" height="20" viewBox="0 0 24 24"><ellipse cx="13" cy="15" rx="8" ry="6" fill="#9AA1AC"/><ellipse cx="8" cy="13" rx="5" ry="4.2" fill="#9AA1AC"/></svg>
+                <span style="font-size:14px;font-weight:800;color:#1A1A1A;">28°</span>
+                <div style="width:100%;height:4px;border-radius:2px;background:#E0E1E6;"><div style="width:80%;height:100%;border-radius:2px;background:#1E88E5;"></div></div>
+                <span style="font-size:10px;color:#6B7280;font-weight:600;">80%</span>
+              </div>
+              <div style="flex:0 0 62px;display:flex;flex-direction:column;align-items:center;gap:7px;padding:14px 6px;border-radius:16px;background:#F0F0F3;">
+                <span style="font-size:12px;color:#6B7280;font-weight:700;">16h</span>
+                <svg width="20" height="20" viewBox="0 0 24 24"><ellipse cx="13" cy="15" rx="8" ry="6" fill="#9AA1AC"/><ellipse cx="8" cy="13" rx="5" ry="4.2" fill="#9AA1AC"/></svg>
+                <span style="font-size:14px;font-weight:800;color:#1A1A1A;">26°</span>
+                <div style="width:100%;height:4px;border-radius:2px;background:#E0E1E6;"><div style="width:50%;height:100%;border-radius:2px;background:#1E88E5;"></div></div>
+                <span style="font-size:10px;color:#6B7280;font-weight:600;">50%</span>
+              </div>
+              <div style="flex:0 0 62px;display:flex;flex-direction:column;align-items:center;gap:7px;padding:14px 6px;border-radius:16px;background:#F0F0F3;">
+                <span style="font-size:12px;color:#6B7280;font-weight:700;">17h</span>
+                <svg width="20" height="20" viewBox="0 0 24 24"><circle cx="9" cy="12" r="6" fill="#FBC02D"/><ellipse cx="14" cy="16" rx="7" ry="5" fill="#9AA1AC"/></svg>
+                <span style="font-size:14px;font-weight:800;color:#1A1A1A;">25°</span>
+                <div style="width:100%;height:4px;border-radius:2px;background:#E0E1E6;"><div style="width:40%;height:100%;border-radius:2px;background:#1E88E5;"></div></div>
+                <span style="font-size:10px;color:#6B7280;font-weight:600;">40%</span>
+              </div>
+              <div style="flex:0 0 62px;display:flex;flex-direction:column;align-items:center;gap:7px;padding:14px 6px;border-radius:16px;background:#F0F0F3;">
+                <span style="font-size:12px;color:#6B7280;font-weight:700;">18h</span>
+                <svg width="20" height="20" viewBox="0 0 24 24"><circle cx="9" cy="12" r="6" fill="#FBC02D"/><ellipse cx="14" cy="16" rx="7" ry="5" fill="#9AA1AC"/></svg>
+                <span style="font-size:14px;font-weight:800;color:#1A1A1A;">24°</span>
+                <div style="width:100%;height:4px;border-radius:2px;background:#E0E1E6;"><div style="width:20%;height:100%;border-radius:2px;background:#1E88E5;"></div></div>
+                <span style="font-size:10px;color:#6B7280;font-weight:600;">20%</span>
+              </div>
+            </div>
+            <button onClick="{{ openHourly }}" style="all:unset;cursor:pointer;display:block;margin-top:14px;font-size:13px;font-weight:700;color:#1E88E5;font-family:inherit;">Ver detalhes por hora →</button>
+          </div>
+          </sc-if>
+
+          <sc-if value="{{ tabSemanal }}" hint-placeholder-val="{{ false }}">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:40px;text-align:center;">
+              <div style="width:64px;height:64px;border-radius:32px;background:#F0F0F3;display:flex;align-items:center;justify-content:center;">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="15" rx="3" stroke="#6B7280" strokeWidth="2"/><path d="M4 10h16" stroke="#6B7280" strokeWidth="2"/><path d="M8 3v4M16 3v4" stroke="#6B7280" strokeWidth="2" strokeLinecap="round"/></svg>
+              </div>
+              <div style="font-size:16px;font-weight:700;color:#1A1A1A;">Previsão semanal em breve</div>
+              <div style="font-size:13px;color:#6B7280;max-width:220px;line-height:1.5;">Esta seção chegará em uma próxima atualização do app.</div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ tabAlertas }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:4px 20px 20px;display:flex;flex-direction:column;gap:14px;">
+              <div style="padding:20px;border-radius:20px;background:#FDECEA;border:1px solid rgba(211,47,47,0.25);">
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <svg width="28" height="28" viewBox="0 0 24 24"><path d="M12 3 22.5 21H1.5Z" fill="#D32F2F"/><rect x="10.8" y="9.2" width="2.4" height="5.6" rx="1.2" fill="#fff"/><circle cx="12" cy="17" r="1.3" fill="#fff"/></svg>
+                  <div>
+                    <div style="font-size:11px;font-weight:700;color:#D32F2F;text-transform:uppercase;letter-spacing:0.4px;">Nível: Alto</div>
+                    <div style="font-size:18px;font-weight:800;color:#1A1A1A;">Tornado Watch Ativo</div>
+                  </div>
+                </div>
+                <div style="margin-top:14px;padding:12px 14px;background:#ffffffb0;border-radius:14px;display:flex;align-items:center;justify-content:space-between;">
+                  <span style="font-size:12px;color:#6B7280;font-weight:600;">VIGÊNCIA</span>
+                  <span style="font-size:14px;color:#1A1A1A;font-weight:800;">14:30 – 17:30</span>
+                </div>
+              </div>
+              <div>
+                <div style="font-size:12px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Detalhes</div>
+                <div style="background:#FFFFFF;border-radius:16px;border:1px solid #E7E8EC;padding:4px 16px;">
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;borderBottom:1px solid #E7E8EC;"><span style="font-size:14px;color:#1A1A1A;">Velocidade do vento</span><span style="font-size:14px;color:#1A1A1A;font-weight:700;">70 km/h</span></div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;borderBottom:1px solid #E7E8EC;"><span style="font-size:14px;color:#1A1A1A;">Probabilidade</span><span style="font-size:14px;color:#1A1A1A;font-weight:700;">85%</span></div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;borderBottom:1px solid #E7E8EC;"><span style="font-size:14px;color:#1A1A1A;">Raio afetado</span><span style="font-size:14px;color:#1A1A1A;font-weight:700;">30 km</span></div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;"><span style="font-size:14px;color:#1A1A1A;">Granizo</span><span style="font-size:14px;color:#1A1A1A;font-weight:700;">Sim</span></div>
+                </div>
+              </div>
+              <div>
+                <div style="font-size:12px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Recomendações</div>
+                <div style="background:#FFFFFF;border-radius:16px;border:1px solid #E7E8EC;padding:14px 16px;display:flex;flex-direction:column;gap:12px;">
+                  <div style="display:flex;align-items:center;gap:10px;"><svg width="20" height="20" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#388E3C"/><path d="M7 12.5l3 3 7-7" stroke="#fff" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"/></svg><span style="font-size:14px;color:#1A1A1A;">Evite áreas abertas</span></div>
+                  <div style="display:flex;align-items:center;gap:10px;"><svg width="20" height="20" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#388E3C"/><path d="M7 12.5l3 3 7-7" stroke="#fff" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"/></svg><span style="font-size:14px;color:#1A1A1A;">Prenda objetos soltos</span></div>
+                  <div style="display:flex;align-items:center;gap:10px;"><svg width="20" height="20" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#388E3C"/><path d="M7 12.5l3 3 7-7" stroke="#fff" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"/></svg><span style="font-size:14px;color:#1A1A1A;">Procure abrigo interno</span></div>
+                </div>
+              </div>
+              <button onClick="{{ openHistory }}" style="all:unset;cursor:pointer;display:block;text-align:center;font-size:13px;font-weight:700;color:#1E88E5;font-family:inherit;">Ver histórico de alertas →</button>
+              <div style="display:flex;gap:10px;">
+                <button onClick="{{ toggleShare }}" style="flex:1;padding:14px;border-radius:14px;background:#F0F0F3;border:none;font-size:14px;font-weight:700;color:#1A1A1A;font-family:inherit;cursor:pointer;">Compartilhar</button>
+                <button style="flex:1;padding:14px;border-radius:14px;background:#D32F2F;border:none;font-size:14px;font-weight:700;color:#fff;font-family:inherit;cursor:pointer;">Notificações Ativas</button>
+              </div>
+            </div>
+            <sc-if value="{{ shareOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:4px 20px 20px;display:flex;flex-direction:column;gap:16px;align-items:center;text-align:center;">
+                <div style="font-size:16px;font-weight:800;color:#1A1A1A;">Compartilhar alerta</div>
+                <div style="width:100%;background:#FFFFFF;border:1px solid #E7E8EC;border-radius:16px;padding:16px;text-align:left;">
+                  <div style="font-size:12px;font-weight:700;color:#D32F2F;text-transform:uppercase;">Aviso de Tornado</div>
+                  <div style="font-size:14px;color:#1A1A1A;font-weight:600;margin-top:6px;">Brasília, DF · vigência até 17:30</div>
+                  <div style="font-size:13px;color:#6B7280;margin-top:6px;line-height:1.5;">Vento 70 km/h · probabilidade 85% · risco de granizo</div>
+                </div>
+                <div style="display:flex;gap:16px;">
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                    <div style="width:48px;height:48px;border-radius:24px;background:#25D366;display:flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M6 18l1.2-3.8A7 7 0 1 1 10 17l-4 1Z" stroke="#fff" strokeWidth="1.8" strokeLinejoin="round"/></svg></div>
+                    <span style="font-size:11px;color:#6B7280;">WhatsApp</span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                    <div style="width:48px;height:48px;border-radius:24px;background:#1E88E5;display:flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 6h16v11H8l-4 3V6Z" stroke="#fff" strokeWidth="1.8" strokeLinejoin="round"/></svg></div>
+                    <span style="font-size:11px;color:#6B7280;">Mensagem</span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                    <div style="width:48px;height:48px;border-radius:24px;background:#F0F0F3;display:flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M9 12a3 3 0 0 0 4.24.2l3-3a3 3 0 0 0-4.24-4.24l-1.5 1.5M15 12a3 3 0 0 0-4.24-.2l-3 3a3 3 0 0 0 4.24 4.24l1.5-1.5" stroke="#1A1A1A" strokeWidth="1.8" strokeLinecap="round"/></svg></div>
+                    <span style="font-size:11px;color:#6B7280;">Copiar link</span>
+                  </div>
+                </div>
+                <button onClick="{{ toggleShare }}" style="all:unset;cursor:pointer;font-size:13px;font-weight:700;color:#1E88E5;font-family:inherit;padding:8px;">Fechar</button>
+              </div>
+            </sc-if>
+          </sc-if>
+
+          <sc-if value="{{ tabMapa }}" hint-placeholder-val="{{ false }}">
+            <div style="flex:1;display:flex;flex-direction:column;padding:4px 20px 20px;">
+              <div style="flex:1;border-radius:20px;overflow:hidden;position:relative;background:repeating-linear-gradient(135deg,#E4E8ED,#E4E8ED 10px,#DCE1E7 10px,#DCE1E7 20px);border:1px solid #E7E8EC;min-height:220px;display:flex;align-items:center;justify-content:center;">
+                <div style="background:#ffffffdd;padding:10px 16px;border-radius:10px;font-family:monospace;font-size:12px;color:#5A5F68;text-align:center;">mapa de radar<br/>+ camadas de alerta</div>
+                <div style="position:absolute;top:16px;left:16px;width:14px;height:14px;border-radius:50%;background:#D32F2F;border:3px solid #fff;boxShadow:0 1px 4px rgba(0,0,0,0.25);"></div>
+                <div style="position:absolute;bottom:40px;right:30px;width:14px;height:14px;border-radius:50%;background:#1E88E5;border:3px solid #fff;boxShadow:0 1px 4px rgba(0,0,0,0.25);"></div>
+              </div>
+              <div style="display:flex;gap:8px;margin-top:14px;">
+                <sc-for list="{{ mapLayers }}" as="ly" hint-placeholder-count="3">
+                  <sc-if value="{{ ly.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ ly.select }}" style="flex:1;padding:10px;border-radius:12px;background:#FDECEA;border:none;text-align:center;font-size:12px;font-weight:700;color:#D32F2F;font-family:inherit;cursor:pointer;">{{ ly.label }}</button></sc-if>
+                  <sc-if value="{{ ly.notActive }}" hint-placeholder-val="{{ true }}"><button onClick="{{ ly.select }}" style="flex:1;padding:10px;border-radius:12px;background:#F0F0F3;border:none;text-align:center;font-size:12px;font-weight:700;color:#1A1A1A;font-family:inherit;cursor:pointer;">{{ ly.label }}</button></sc-if>
+                </sc-for>
+              </div>
+              <div style="display:flex;gap:6px;margin-top:10px;overflow-x:auto;">
+                <sc-for list="{{ mapHours }}" as="mh" hint-placeholder-count="5">
+                  <sc-if value="{{ mh.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ mh.select }}" style="flex:0 0 auto;padding:8px 14px;border-radius:10px;background:#1E88E5;border:none;font-size:12px;font-weight:700;color:#fff;font-family:inherit;cursor:pointer;">{{ mh.label }}</button></sc-if>
+                  <sc-if value="{{ mh.notActive }}" hint-placeholder-val="{{ true }}"><button onClick="{{ mh.select }}" style="flex:0 0 auto;padding:8px 14px;border-radius:10px;background:#F0F0F3;border:none;font-size:12px;font-weight:600;color:#6B7280;font-family:inherit;cursor:pointer;">{{ mh.label }}</button></sc-if>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <div style="flex:1;"></div>
+
+          <div style="display:flex;align-items:center;justify-content:space-around;padding:10px 8px 8px;borderTop:1px solid #E7E8EC;background:#FFFFFF;">
+            <button onClick="{{ setTabHoje }}" style="all:unset;display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 10px;cursor:pointer;">
+              <sc-if value="{{ tabHoje }}" hint-placeholder-val="{{ true }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 11.5 12 4l8 7.5" stroke="#1E88E5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><path d="M6 10.2V20a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-9.8" stroke="#1E88E5" strokeWidth="2" strokeLinejoin="round"/></svg></sc-if>
+              <sc-if value="{{ tabHojeOff }}" hint-placeholder-val="{{ false }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 11.5 12 4l8 7.5" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><path d="M6 10.2V20a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-9.8" stroke="#6B7280" strokeWidth="2" strokeLinejoin="round"/></svg></sc-if>
+              <sc-if value="{{ tabHoje }}" hint-placeholder-val="{{ true }}"><span style="font-size:11px;color:#1E88E5;font-weight:800;">Hoje</span></sc-if>
+              <sc-if value="{{ tabHojeOff }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;color:#6B7280;font-weight:600;">Hoje</span></sc-if>
+            </button>
+            <button onClick="{{ setTabSemanal }}" style="all:unset;display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 10px;cursor:pointer;">
+              <sc-if value="{{ tabSemanal }}" hint-placeholder-val="{{ false }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="15" rx="3" stroke="#1E88E5" strokeWidth="2"/><path d="M4 10h16" stroke="#1E88E5" strokeWidth="2"/><path d="M8 3v4M16 3v4" stroke="#1E88E5" strokeWidth="2" strokeLinecap="round"/></svg></sc-if>
+              <sc-if value="{{ tabSemanalOff }}" hint-placeholder-val="{{ true }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="15" rx="3" stroke="#6B7280" strokeWidth="2"/><path d="M4 10h16" stroke="#6B7280" strokeWidth="2"/><path d="M8 3v4M16 3v4" stroke="#6B7280" strokeWidth="2" strokeLinecap="round"/></svg></sc-if>
+              <sc-if value="{{ tabSemanal }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;color:#1E88E5;font-weight:800;">Semanal</span></sc-if>
+              <sc-if value="{{ tabSemanalOff }}" hint-placeholder-val="{{ true }}"><span style="font-size:11px;color:#6B7280;font-weight:600;">Semanal</span></sc-if>
+            </button>
+            <button onClick="{{ setTabAlertas }}" style="all:unset;display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 10px;cursor:pointer;">
+              <sc-if value="{{ tabAlertas }}" hint-placeholder-val="{{ false }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 4 22 20H2Z" stroke="#1E88E5" strokeWidth="2" strokeLinejoin="round"/><path d="M12 10.5v3.5" stroke="#1E88E5" strokeWidth="2" strokeLinecap="round"/><circle cx="12" cy="17" r="1.1" fill="#1E88E5"/></svg></sc-if>
+              <sc-if value="{{ tabAlertasOff }}" hint-placeholder-val="{{ true }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 4 22 20H2Z" stroke="#6B7280" strokeWidth="2" strokeLinejoin="round"/><path d="M12 10.5v3.5" stroke="#6B7280" strokeWidth="2" strokeLinecap="round"/><circle cx="12" cy="17" r="1.1" fill="#6B7280"/></svg></sc-if>
+              <sc-if value="{{ tabAlertas }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;color:#1E88E5;font-weight:800;">Alertas</span></sc-if>
+              <sc-if value="{{ tabAlertasOff }}" hint-placeholder-val="{{ true }}"><span style="font-size:11px;color:#6B7280;font-weight:600;">Alertas</span></sc-if>
+            </button>
+            <button onClick="{{ setTabMapa }}" style="all:unset;display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 10px;cursor:pointer;">
+              <sc-if value="{{ tabMapa }}" hint-placeholder-val="{{ false }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M9 4 3 6.2v13.8l6-2.2 6 2.2 6-2.2V4.4l-6 2.2-6-2.2Z" stroke="#1E88E5" strokeWidth="2" strokeLinejoin="round"/><path d="M9 4v13.8M15 6.6v13.8" stroke="#1E88E5" strokeWidth="2"/></svg></sc-if>
+              <sc-if value="{{ tabMapaOff }}" hint-placeholder-val="{{ true }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M9 4 3 6.2v13.8l6-2.2 6 2.2 6-2.2V4.4l-6 2.2-6-2.2Z" stroke="#6B7280" strokeWidth="2" strokeLinejoin="round"/><path d="M9 4v13.8M15 6.6v13.8" stroke="#6B7280" strokeWidth="2"/></svg></sc-if>
+              <sc-if value="{{ tabMapa }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;color:#1E88E5;font-weight:800;">Mapa</span></sc-if>
+              <sc-if value="{{ tabMapaOff }}" hint-placeholder-val="{{ true }}"><span style="font-size:11px;color:#6B7280;font-weight:600;">Mapa</span></sc-if>
+            </button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;min-height:100%;background:#121212;font-family:'Inter',system-ui,sans-serif;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 20px 16px;background:#1A1A1A;">
+            <button onClick="{{ openLocations }}" style="all:unset;cursor:pointer;display:flex;align-items:center;gap:8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 21s7-6.8 7-12.4A7 7 0 1 0 5 8.6C5 14.2 12 21 12 21Z" stroke="#5AA6EE" strokeWidth="2" strokeLinejoin="round"/><circle cx="12" cy="8.6" r="2.4" fill="#5AA6EE"/></svg>
+              <div>
+                <div style="font-size:11px;color:#B0B4BA;font-weight:600;letter-spacing:0.4px;text-transform:uppercase;">Localização atual</div>
+                <div style="font-size:17px;color:#F2F2F2;font-weight:700;">Brasília, DF</div>
+              </div>
+            </button>
+            <button onClick="{{ openSettings }}" style="width:40px;height:40px;border-radius:20px;background:#212225;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 7h9M17 7h3M4 17h3M11 17h9" stroke="#F2F2F2" strokeWidth="2" strokeLinecap="round"/><circle cx="13" cy="7" r="2.6" fill="#212225" stroke="#F2F2F2" strokeWidth="2"/><circle cx="7" cy="17" r="2.6" fill="#212225" stroke="#F2F2F2" strokeWidth="2"/></svg>
+            </button>
+          </div>
+
+          <sc-if value="{{ tabHoje }}" hint-placeholder-val="{{ true }}">
+          <div style="margin:0 20px 16px;padding:24px 24px 20px;border-radius:28px;background:#1E1E1E;border:1px solid #2C2D31;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div>
+                <div style="font-size:13px;color:#B0B4BA;margin-bottom:4px;font-weight:500;">Agora mesmo</div>
+                <div style="display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;">
+                  <span style="font-size:52px;font-weight:800;color:#F2F2F2;line-height:1;">31°</span>
+                </div>
+                <div style="font-size:15px;color:#B0B4BA;font-weight:600;margin-top:2px;">Parcialmente nublado</div>
+              </div>
+              <svg width="56" height="56" viewBox="0 0 64 64"><circle cx="23" cy="23" r="12" fill="#FBC02D"/><ellipse cx="37" cy="40" rx="19" ry="13" fill="#3A3D42" stroke="#4A4D52" strokeWidth="1.5"/><ellipse cx="24" cy="36" rx="13" ry="10" fill="#3A3D42" stroke="#4A4D52" strokeWidth="1.5"/></svg>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:20px;padding-top:16px;borderTop:1px solid #2C2D31;">
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="10" y="3" width="4" height="11" rx="2" stroke="#B0B4BA" strokeWidth="2"/><circle cx="12" cy="18" r="3.4" fill="#B0B4BA"/></svg>
+                <span style="font-size:11px;color:#B0B4BA;font-weight:500;">Sensação</span>
+                <span style="font-size:14px;color:#F2F2F2;font-weight:700;">35°</span>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;">
+                <svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 3s7 8.2 7 13a7 7 0 1 1-14 0c0-4.8 7-13 7-13Z" fill="#B0B4BA"/></svg>
+                <span style="font-size:11px;color:#B0B4BA;font-weight:500;">Umidade</span>
+                <span style="font-size:14px;color:#F2F2F2;font-weight:700;">65%</span>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 8h10.5a2.75 2.75 0 1 0-2.75-2.75" stroke="#B0B4BA" strokeWidth="2" strokeLinecap="round"/><path d="M3 13.5h14a2.75 2.75 0 1 1-2.75 2.75" stroke="#B0B4BA" strokeWidth="2" strokeLinecap="round"/></svg>
+                <span style="font-size:11px;color:#B0B4BA;font-weight:500;">Vento</span>
+                <span style="font-size:14px;color:#F2F2F2;font-weight:700;">18 km/h</span>
+              </div>
+            </div>
+          </div>
+
+          <button onClick="{{ toggleAlert }}" style="all:unset;display:block;cursor:pointer;margin:0 20px 16px;padding:16px 18px;border-radius:20px;background:#3A1A18;border:1px solid rgba(239,83,80,0.3);">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 3 22.5 21H1.5Z" fill="#EF5350"/><rect x="10.8" y="9.2" width="2.4" height="5.6" rx="1.2" fill="#1a1a1a"/><circle cx="12" cy="17" r="1.3" fill="#1a1a1a"/></svg>
+              <div style="flex:1;">
+                <div style="font-size:14px;font-weight:800;color:#EF5350;">Aviso de Tornado</div>
+                <div style="font-size:12px;color:#C9A5A3;margin-top:1px;font-weight:500;">Vigília ativa · próximas 3h</div>
+              </div>
+              <sc-if value="{{ alertClosed }}" hint-placeholder-val="{{ true }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#EF5350" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"/></svg></sc-if>
+              <sc-if value="{{ alertOpen }}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="transform:rotate(180deg)"><path d="M6 9l6 6 6-6" stroke="#EF5350" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"/></svg></sc-if>
+            </div>
+            <sc-if value="{{ alertOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:14px;padding-top:14px;borderTop:1px solid rgba(239,83,80,0.25);display:flex;flex-direction:column;gap:10px;">
+                <div style="display:flex;gap:8px;">
+                  <div style="flex:1;background:#00000033;borderRadius:12px;padding:8px;text-align:center;">
+                    <div style="font-size:10px;color:#C9A5A3;font-weight:600;">PROBABILIDADE</div>
+                    <div style="font-size:14px;color:#F2F2F2;font-weight:800;margin-top:2px;">85%</div>
+                  </div>
+                  <div style="flex:1;background:#00000033;borderRadius:12px;padding:8px;text-align:center;">
+                    <div style="font-size:10px;color:#C9A5A3;font-weight:600;">VENTO</div>
+                    <div style="font-size:14px;color:#F2F2F2;font-weight:800;margin-top:2px;">70 km/h</div>
+                  </div>
+                  <div style="flex:1;background:#00000033;borderRadius:12px;padding:8px;text-align:center;">
+                    <div style="font-size:10px;color:#C9A5A3;font-weight:600;">GRANIZO</div>
+                    <div style="font-size:14px;color:#F2F2F2;font-weight:800;margin-top:2px;">Sim</div>
+                  </div>
+                </div>
+                <div style="font-size:12.5px;color:#D8B8B6;lineHeight:1.5;text-align:left;">Evite áreas abertas e proteja objetos soltos até o fim da vigência.</div>
+              </div>
+            </sc-if>
+          </button>
+
+          <div style="padding:0 20px 4px;">
+            <div style="font-size:12px;font-weight:700;color:#B0B4BA;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;">Próximas 24 horas</div>
+            <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:16px;">
+              <div style="flex:0 0 62px;display:flex;flex-direction:column;align-items:center;gap:7px;padding:14px 6px;border-radius:16px;background:#212225;">
+                <span style="font-size:12px;color:#B0B4BA;font-weight:700;">14h</span>
+                <svg width="20" height="20" viewBox="0 0 24 24"><ellipse cx="13" cy="15" rx="8" ry="6" fill="#8B9099"/><ellipse cx="8" cy="13" rx="5" ry="4.2" fill="#8B9099"/></svg>
+                <span style="font-size:14px;font-weight:800;color:#F2F2F2;">29°</span>
+                <div style="width:100%;height:4px;border-radius:2px;background:#2E3135;"><div style="width:60%;height:100%;border-radius:2px;background:#5AA6EE;"></div></div>
+                <span style="font-size:10px;color:#B0B4BA;font-weight:600;">60%</span>
+              </div>
+              <div style="flex:0 0 62px;display:flex;flex-direction:column;align-items:center;gap:7px;padding:14px 6px;border-radius:16px;background:#212225;">
+                <span style="font-size:12px;color:#B0B4BA;font-weight:700;">15h</span>
+                <svg width="20" height="20" viewBox="0 0 24 24"><ellipse cx="13" cy="15" rx="8" ry="6" fill="#8B9099"/><ellipse cx="8" cy="13" rx="5" ry="4.2" fill="#8B9099"/></svg>
+                <span style="font-size:14px;font-weight:800;color:#F2F2F2;">28°</span>
+                <div style="width:100%;height:4px;border-radius:2px;background:#2E3135;"><div style="width:80%;height:100%;border-radius:2px;background:#5AA6EE;"></div></div>
+                <span style="font-size:10px;color:#B0B4BA;font-weight:600;">80%</span>
+              </div>
+              <div style="flex:0 0 62px;display:flex;flex-direction:column;align-items:center;gap:7px;padding:14px 6px;border-radius:16px;background:#212225;">
+                <span style="font-size:12px;color:#B0B4BA;font-weight:700;">16h</span>
+                <svg width="20" height="20" viewBox="0 0 24 24"><ellipse cx="13" cy="15" rx="8" ry="6" fill="#8B9099"/><ellipse cx="8" cy="13" rx="5" ry="4.2" fill="#8B9099"/></svg>
+                <span style="font-size:14px;font-weight:800;color:#F2F2F2;">26°</span>
+                <div style="width:100%;height:4px;border-radius:2px;background:#2E3135;"><div style="width:50%;height:100%;border-radius:2px;background:#5AA6EE;"></div></div>
+                <span style="font-size:10px;color:#B0B4BA;font-weight:600;">50%</span>
+              </div>
+              <div style="flex:0 0 62px;display:flex;flex-direction:column;align-items:center;gap:7px;padding:14px 6px;border-radius:16px;background:#212225;">
+                <span style="font-size:12px;color:#B0B4BA;font-weight:700;">17h</span>
+                <svg width="20" height="20" viewBox="0 0 24 24"><circle cx="9" cy="12" r="6" fill="#FBC02D"/><ellipse cx="14" cy="16" rx="7" ry="5" fill="#8B9099"/></svg>
+                <span style="font-size:14px;font-weight:800;color:#F2F2F2;">25°</span>
+                <div style="width:100%;height:4px;border-radius:2px;background:#2E3135;"><div style="width:40%;height:100%;border-radius:2px;background:#5AA6EE;"></div></div>
+                <span style="font-size:10px;color:#B0B4BA;font-weight:600;">40%</span>
+              </div>
+              <div style="flex:0 0 62px;display:flex;flex-direction:column;align-items:center;gap:7px;padding:14px 6px;border-radius:16px;background:#212225;">
+                <span style="font-size:12px;color:#B0B4BA;font-weight:700;">18h</span>
+                <svg width="20" height="20" viewBox="0 0 24 24"><circle cx="9" cy="12" r="6" fill="#FBC02D"/><ellipse cx="14" cy="16" rx="7" ry="5" fill="#8B9099"/></svg>
+                <span style="font-size:14px;font-weight:800;color:#F2F2F2;">24°</span>
+                <div style="width:100%;height:4px;border-radius:2px;background:#2E3135;"><div style="width:20%;height:100%;border-radius:2px;background:#5AA6EE;"></div></div>
+                <span style="font-size:10px;color:#B0B4BA;font-weight:600;">20%</span>
+              </div>
+            </div>
+            <button onClick="{{ openHourly }}" style="all:unset;cursor:pointer;display:block;margin-top:14px;font-size:13px;font-weight:700;color:#5AA6EE;font-family:inherit;">Ver detalhes por hora →</button>
+          </div>
+          </sc-if>
+
+          <sc-if value="{{ tabSemanal }}" hint-placeholder-val="{{ false }}">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:40px;text-align:center;">
+              <div style="width:64px;height:64px;border-radius:32px;background:#212225;display:flex;align-items:center;justify-content:center;">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="15" rx="3" stroke="#B0B4BA" strokeWidth="2"/><path d="M4 10h16" stroke="#B0B4BA" strokeWidth="2"/><path d="M8 3v4M16 3v4" stroke="#B0B4BA" strokeWidth="2" strokeLinecap="round"/></svg>
+              </div>
+              <div style="font-size:16px;font-weight:700;color:#F2F2F2;">Previsão semanal em breve</div>
+              <div style="font-size:13px;color:#B0B4BA;max-width:220px;line-height:1.5;">Esta seção chegará em uma próxima atualização do app.</div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ tabAlertas }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:4px 20px 20px;display:flex;flex-direction:column;gap:14px;">
+              <div style="padding:20px;border-radius:20px;background:#3A1A18;border:1px solid rgba(239,83,80,0.3);">
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <svg width="28" height="28" viewBox="0 0 24 24"><path d="M12 3 22.5 21H1.5Z" fill="#EF5350"/><rect x="10.8" y="9.2" width="2.4" height="5.6" rx="1.2" fill="#1a1a1a"/><circle cx="12" cy="17" r="1.3" fill="#1a1a1a"/></svg>
+                  <div>
+                    <div style="font-size:11px;font-weight:700;color:#EF5350;text-transform:uppercase;letter-spacing:0.4px;">Nível: Alto</div>
+                    <div style="font-size:18px;font-weight:800;color:#F2F2F2;">Tornado Watch Ativo</div>
+                  </div>
+                </div>
+                <div style="margin-top:14px;padding:12px 14px;background:#00000033;border-radius:14px;display:flex;align-items:center;justify-content:space-between;">
+                  <span style="font-size:12px;color:#C9A5A3;font-weight:600;">VIGÊNCIA</span>
+                  <span style="font-size:14px;color:#F2F2F2;font-weight:800;">14:30 – 17:30</span>
+                </div>
+              </div>
+              <div>
+                <div style="font-size:12px;font-weight:700;color:#B0B4BA;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Detalhes</div>
+                <div style="background:#1E1E1E;border-radius:16px;border:1px solid #2C2D31;padding:4px 16px;">
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;borderBottom:1px solid #2C2D31;"><span style="font-size:14px;color:#F2F2F2;">Velocidade do vento</span><span style="font-size:14px;color:#F2F2F2;font-weight:700;">70 km/h</span></div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;borderBottom:1px solid #2C2D31;"><span style="font-size:14px;color:#F2F2F2;">Probabilidade</span><span style="font-size:14px;color:#F2F2F2;font-weight:700;">85%</span></div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;borderBottom:1px solid #2C2D31;"><span style="font-size:14px;color:#F2F2F2;">Raio afetado</span><span style="font-size:14px;color:#F2F2F2;font-weight:700;">30 km</span></div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;"><span style="font-size:14px;color:#F2F2F2;">Granizo</span><span style="font-size:14px;color:#F2F2F2;font-weight:700;">Sim</span></div>
+                </div>
+              </div>
+              <div>
+                <div style="font-size:12px;font-weight:700;color:#B0B4BA;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Recomendações</div>
+                <div style="background:#1E1E1E;border-radius:16px;border:1px solid #2C2D31;padding:14px 16px;display:flex;flex-direction:column;gap:12px;">
+                  <div style="display:flex;align-items:center;gap:10px;"><svg width="20" height="20" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#66BB6A"/><path d="M7 12.5l3 3 7-7" stroke="#121212" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"/></svg><span style="font-size:14px;color:#F2F2F2;">Evite áreas abertas</span></div>
+                  <div style="display:flex;align-items:center;gap:10px;"><svg width="20" height="20" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#66BB6A"/><path d="M7 12.5l3 3 7-7" stroke="#121212" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"/></svg><span style="font-size:14px;color:#F2F2F2;">Prenda objetos soltos</span></div>
+                  <div style="display:flex;align-items:center;gap:10px;"><svg width="20" height="20" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#66BB6A"/><path d="M7 12.5l3 3 7-7" stroke="#121212" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"/></svg><span style="font-size:14px;color:#F2F2F2;">Procure abrigo interno</span></div>
+                </div>
+              </div>
+              <button onClick="{{ openHistory }}" style="all:unset;cursor:pointer;display:block;text-align:center;font-size:13px;font-weight:700;color:#5AA6EE;font-family:inherit;">Ver histórico de alertas →</button>
+              <div style="display:flex;gap:10px;">
+                <button onClick="{{ toggleShare }}" style="flex:1;padding:14px;border-radius:14px;background:#212225;border:none;font-size:14px;font-weight:700;color:#F2F2F2;font-family:inherit;cursor:pointer;">Compartilhar</button>
+                <button style="flex:1;padding:14px;border-radius:14px;background:#EF5350;border:none;font-size:14px;font-weight:800;color:#1A1A1A;font-family:inherit;cursor:pointer;">Notificações Ativas</button>
+              </div>
+            </div>
+            <sc-if value="{{ shareOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:4px 20px 20px;display:flex;flex-direction:column;gap:16px;align-items:center;text-align:center;">
+                <div style="font-size:16px;font-weight:800;color:#F2F2F2;">Compartilhar alerta</div>
+                <div style="width:100%;background:#1E1E1E;border:1px solid #2C2D31;border-radius:16px;padding:16px;text-align:left;">
+                  <div style="font-size:12px;font-weight:700;color:#EF5350;text-transform:uppercase;">Aviso de Tornado</div>
+                  <div style="font-size:14px;color:#F2F2F2;font-weight:600;margin-top:6px;">Brasília, DF · vigência até 17:30</div>
+                  <div style="font-size:13px;color:#B0B4BA;margin-top:6px;line-height:1.5;">Vento 70 km/h · probabilidade 85% · risco de granizo</div>
+                </div>
+                <div style="display:flex;gap:16px;">
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                    <div style="width:48px;height:48px;border-radius:24px;background:#25D366;display:flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M6 18l1.2-3.8A7 7 0 1 1 10 17l-4 1Z" stroke="#fff" strokeWidth="1.8" strokeLinejoin="round"/></svg></div>
+                    <span style="font-size:11px;color:#B0B4BA;">WhatsApp</span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                    <div style="width:48px;height:48px;border-radius:24px;background:#5AA6EE;display:flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 6h16v11H8l-4 3V6Z" stroke="#121212" strokeWidth="1.8" strokeLinejoin="round"/></svg></div>
+                    <span style="font-size:11px;color:#B0B4BA;">Mensagem</span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                    <div style="width:48px;height:48px;border-radius:24px;background:#212225;display:flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M9 12a3 3 0 0 0 4.24.2l3-3a3 3 0 0 0-4.24-4.24l-1.5 1.5M15 12a3 3 0 0 0-4.24-.2l-3 3a3 3 0 0 0 4.24 4.24l1.5-1.5" stroke="#F2F2F2" strokeWidth="1.8" strokeLinecap="round"/></svg></div>
+                    <span style="font-size:11px;color:#B0B4BA;">Copiar link</span>
+                  </div>
+                </div>
+                <button onClick="{{ toggleShare }}" style="all:unset;cursor:pointer;font-size:13px;font-weight:700;color:#5AA6EE;font-family:inherit;padding:8px;">Fechar</button>
+              </div>
+            </sc-if>
+          </sc-if>
+
+          <sc-if value="{{ tabMapa }}" hint-placeholder-val="{{ false }}">
+            <div style="flex:1;display:flex;flex-direction:column;padding:4px 20px 20px;">
+              <div style="flex:1;border-radius:20px;overflow:hidden;position:relative;background:repeating-linear-gradient(135deg,#242628,#242628 10px,#2A2C2F 10px,#2A2C2F 20px);border:1px solid #2C2D31;min-height:220px;display:flex;align-items:center;justify-content:center;">
+                <div style="background:#000000aa;padding:10px 16px;border-radius:10px;font-family:monospace;font-size:12px;color:#C7CBD1;text-align:center;">mapa de radar<br/>+ camadas de alerta</div>
+                <div style="position:absolute;top:16px;left:16px;width:14px;height:14px;border-radius:50%;background:#EF5350;border:3px solid #1a1a1a;boxShadow:0 1px 4px rgba(0,0,0,0.5);"></div>
+                <div style="position:absolute;bottom:40px;right:30px;width:14px;height:14px;border-radius:50%;background:#5AA6EE;border:3px solid #1a1a1a;boxShadow:0 1px 4px rgba(0,0,0,0.5);"></div>
+              </div>
+              <div style="display:flex;gap:8px;margin-top:14px;">
+                <sc-for list="{{ mapLayers }}" as="ly" hint-placeholder-count="3">
+                  <sc-if value="{{ ly.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ ly.select }}" style="flex:1;padding:10px;border-radius:12px;background:#3A1A18;border:none;text-align:center;font-size:12px;font-weight:700;color:#EF5350;font-family:inherit;cursor:pointer;">{{ ly.label }}</button></sc-if>
+                  <sc-if value="{{ ly.notActive }}" hint-placeholder-val="{{ true }}"><button onClick="{{ ly.select }}" style="flex:1;padding:10px;border-radius:12px;background:#212225;border:none;text-align:center;font-size:12px;font-weight:700;color:#F2F2F2;font-family:inherit;cursor:pointer;">{{ ly.label }}</button></sc-if>
+                </sc-for>
+              </div>
+              <div style="display:flex;gap:6px;margin-top:10px;overflow-x:auto;">
+                <sc-for list="{{ mapHours }}" as="mh" hint-placeholder-count="5">
+                  <sc-if value="{{ mh.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ mh.select }}" style="flex:0 0 auto;padding:8px 14px;border-radius:10px;background:#5AA6EE;border:none;font-size:12px;font-weight:700;color:#121212;font-family:inherit;cursor:pointer;">{{ mh.label }}</button></sc-if>
+                  <sc-if value="{{ mh.notActive }}" hint-placeholder-val="{{ true }}"><button onClick="{{ mh.select }}" style="flex:0 0 auto;padding:8px 14px;border-radius:10px;background:#212225;border:none;font-size:12px;font-weight:600;color:#B0B4BA;font-family:inherit;cursor:pointer;">{{ mh.label }}</button></sc-if>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <div style="flex:1;"></div>
+
+          <div style="display:flex;align-items:center;justify-content:space-around;padding:10px 8px 8px;borderTop:1px solid #2C2D31;background:#1A1A1A;">
+            <button onClick="{{ setTabHoje }}" style="all:unset;display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 10px;cursor:pointer;">
+              <sc-if value="{{ tabHoje }}" hint-placeholder-val="{{ true }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 11.5 12 4l8 7.5" stroke="#5AA6EE" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><path d="M6 10.2V20a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-9.8" stroke="#5AA6EE" strokeWidth="2" strokeLinejoin="round"/></svg></sc-if>
+              <sc-if value="{{ tabHojeOff }}" hint-placeholder-val="{{ false }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 11.5 12 4l8 7.5" stroke="#B0B4BA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><path d="M6 10.2V20a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-9.8" stroke="#B0B4BA" strokeWidth="2" strokeLinejoin="round"/></svg></sc-if>
+              <sc-if value="{{ tabHoje }}" hint-placeholder-val="{{ true }}"><span style="font-size:11px;color:#5AA6EE;font-weight:800;">Hoje</span></sc-if>
+              <sc-if value="{{ tabHojeOff }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;color:#B0B4BA;font-weight:600;">Hoje</span></sc-if>
+            </button>
+            <button onClick="{{ setTabSemanal }}" style="all:unset;display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 10px;cursor:pointer;">
+              <sc-if value="{{ tabSemanal }}" hint-placeholder-val="{{ false }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="15" rx="3" stroke="#5AA6EE" strokeWidth="2"/><path d="M4 10h16" stroke="#5AA6EE" strokeWidth="2"/><path d="M8 3v4M16 3v4" stroke="#5AA6EE" strokeWidth="2" strokeLinecap="round"/></svg></sc-if>
+              <sc-if value="{{ tabSemanalOff }}" hint-placeholder-val="{{ true }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="15" rx="3" stroke="#B0B4BA" strokeWidth="2"/><path d="M4 10h16" stroke="#B0B4BA" strokeWidth="2"/><path d="M8 3v4M16 3v4" stroke="#B0B4BA" strokeWidth="2" strokeLinecap="round"/></svg></sc-if>
+              <sc-if value="{{ tabSemanal }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;color:#5AA6EE;font-weight:800;">Semanal</span></sc-if>
+              <sc-if value="{{ tabSemanalOff }}" hint-placeholder-val="{{ true }}"><span style="font-size:11px;color:#B0B4BA;font-weight:600;">Semanal</span></sc-if>
+            </button>
+            <button onClick="{{ setTabAlertas }}" style="all:unset;display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 10px;cursor:pointer;">
+              <sc-if value="{{ tabAlertas }}" hint-placeholder-val="{{ false }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 4 22 20H2Z" stroke="#5AA6EE" strokeWidth="2" strokeLinejoin="round"/><path d="M12 10.5v3.5" stroke="#5AA6EE" strokeWidth="2" strokeLinecap="round"/><circle cx="12" cy="17" r="1.1" fill="#5AA6EE"/></svg></sc-if>
+              <sc-if value="{{ tabAlertasOff }}" hint-placeholder-val="{{ true }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 4 22 20H2Z" stroke="#B0B4BA" strokeWidth="2" strokeLinejoin="round"/><path d="M12 10.5v3.5" stroke="#B0B4BA" strokeWidth="2" strokeLinecap="round"/><circle cx="12" cy="17" r="1.1" fill="#B0B4BA"/></svg></sc-if>
+              <sc-if value="{{ tabAlertas }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;color:#5AA6EE;font-weight:800;">Alertas</span></sc-if>
+              <sc-if value="{{ tabAlertasOff }}" hint-placeholder-val="{{ true }}"><span style="font-size:11px;color:#B0B4BA;font-weight:600;">Alertas</span></sc-if>
+            </button>
+            <button onClick="{{ setTabMapa }}" style="all:unset;display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 10px;cursor:pointer;">
+              <sc-if value="{{ tabMapa }}" hint-placeholder-val="{{ false }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M9 4 3 6.2v13.8l6-2.2 6 2.2 6-2.2V4.4l-6 2.2-6-2.2Z" stroke="#5AA6EE" strokeWidth="2" strokeLinejoin="round"/><path d="M9 4v13.8M15 6.6v13.8" stroke="#5AA6EE" strokeWidth="2"/></svg></sc-if>
+              <sc-if value="{{ tabMapaOff }}" hint-placeholder-val="{{ true }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M9 4 3 6.2v13.8l6-2.2 6 2.2 6-2.2V4.4l-6 2.2-6-2.2Z" stroke="#B0B4BA" strokeWidth="2" strokeLinejoin="round"/><path d="M9 4v13.8M15 6.6v13.8" stroke="#B0B4BA" strokeWidth="2"/></svg></sc-if>
+              <sc-if value="{{ tabMapa }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;color:#5AA6EE;font-weight:800;">Mapa</span></sc-if>
+              <sc-if value="{{ tabMapaOff }}" hint-placeholder-val="{{ true }}"><span style="font-size:11px;color:#B0B4BA;font-weight:600;">Mapa</span></sc-if>
+            </button>
+          </div>
+        </div>
+      </sc-if>
+    </sc-if>
+
+    <sc-if value="{{ isSettings }}" hint-placeholder-val="{{ false }}">
+      <sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;min-height:100%;background:#FAFAFA;font-family:'Inter',system-ui,sans-serif;">
+          <div style="display:flex;align-items:center;gap:12px;padding:20px 20px 16px;background:#FFFFFF;">
+            <button onClick="{{ closeSettings }}" style="all:unset;cursor:pointer;display:flex;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="#1A1A1A" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </button>
+            <span style="font-size:20px;font-weight:800;color:#1A1A1A;">Configurações</span>
+          </div>
+
+          <div style="margin:8px 20px 20px;">
+            <div style="font-size:12px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;padding-left:4px;">Notificações</div>
+            <div style="background:#FFFFFF;border-radius:16px;padding:2px 16px;border:1px solid #E7E8EC;">
+              <button onClick="{{ toggleSevero }}" style="all:unset;display:flex;align-items:center;justify-content:space-between;width:100%;padding:14px 0;cursor:pointer;borderBottom:1px solid #E7E8EC;">
+                <span style="font-size:15px;color:#1A1A1A;font-weight:500;font-family:inherit;">Alertas Severos</span>
+                <sc-if value="{{ notifSeveroOn }}" hint-placeholder-val="{{ true }}"><div style="width:22px;height:22px;border-radius:6px;background:#1E88E5;display:flex;align-items:center;justify-content:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/></svg></div></sc-if>
+                <sc-if value="{{ notifSeveroOff }}" hint-placeholder-val="{{ false }}"><div style="width:22px;height:22px;border-radius:6px;border:2px solid #D9DBE0;"></div></sc-if>
+              </button>
+              <button onClick="{{ toggleGranizo }}" style="all:unset;display:flex;align-items:center;justify-content:space-between;width:100%;padding:14px 0;cursor:pointer;borderBottom:1px solid #E7E8EC;">
+                <span style="font-size:15px;color:#1A1A1A;font-weight:500;font-family:inherit;">Avisos de Granizo</span>
+                <sc-if value="{{ notifGranizoOn }}" hint-placeholder-val="{{ true }}"><div style="width:22px;height:22px;border-radius:6px;background:#1E88E5;display:flex;align-items:center;justify-content:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/></svg></div></sc-if>
+                <sc-if value="{{ notifGranizoOff }}" hint-placeholder-val="{{ false }}"><div style="width:22px;height:22px;border-radius:6px;border:2px solid #D9DBE0;"></div></sc-if>
+              </button>
+              <button onClick="{{ toggleTornado }}" style="all:unset;display:flex;align-items:center;justify-content:space-between;width:100%;padding:14px 0;cursor:pointer;borderBottom:1px solid #E7E8EC;">
+                <span style="font-size:15px;color:#1A1A1A;font-weight:500;font-family:inherit;">Avisos de Tornado</span>
+                <sc-if value="{{ notifTornadoOn }}" hint-placeholder-val="{{ true }}"><div style="width:22px;height:22px;border-radius:6px;background:#1E88E5;display:flex;align-items:center;justify-content:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/></svg></div></sc-if>
+                <sc-if value="{{ notifTornadoOff }}" hint-placeholder-val="{{ false }}"><div style="width:22px;height:22px;border-radius:6px;border:2px solid #D9DBE0;"></div></sc-if>
+              </button>
+              <button onClick="{{ toggleRajadas }}" style="all:unset;display:flex;align-items:center;justify-content:space-between;width:100%;padding:14px 0;cursor:pointer;">
+                <span style="font-size:15px;color:#1A1A1A;font-weight:500;font-family:inherit;">Avisos de Rajadas</span>
+                <sc-if value="{{ notifRajadasOn }}" hint-placeholder-val="{{ true }}"><div style="width:22px;height:22px;border-radius:6px;background:#1E88E5;display:flex;align-items:center;justify-content:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/></svg></div></sc-if>
+                <sc-if value="{{ notifRajadasOff }}" hint-placeholder-val="{{ false }}"><div style="width:22px;height:22px;border-radius:6px;border:2px solid #D9DBE0;"></div></sc-if>
+              </button>
+            </div>
+
+            <div style="margin-top:14px;background:#FFFFFF;border-radius:16px;padding:14px 16px;border:1px solid #E7E8EC;">
+              <div style="font-size:13px;color:#1A1A1A;font-weight:600;margin-bottom:10px;">Volume do alerta</div>
+              <div style="display:flex;gap:6px;background:#F0F0F3;padding:4px;border-radius:14px;">
+                <sc-if value="{{ volBaixaOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ setVolBaixa }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:#1E88E5;color:#fff;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;">Baixa</button></sc-if>
+                <sc-if value="{{ volBaixaOff }}" hint-placeholder-val="{{ true }}"><button onClick="{{ setVolBaixa }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:transparent;color:#6B7280;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;">Baixa</button></sc-if>
+                <sc-if value="{{ volMediaOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ setVolMedia }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:#1E88E5;color:#fff;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;">Média</button></sc-if>
+                <sc-if value="{{ volMediaOff }}" hint-placeholder-val="{{ true }}"><button onClick="{{ setVolMedia }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:transparent;color:#6B7280;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;">Média</button></sc-if>
+                <sc-if value="{{ volAltaOn }}" hint-placeholder-val="{{ true }}"><button onClick="{{ setVolAlta }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:#1E88E5;color:#fff;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;">Alta</button></sc-if>
+                <sc-if value="{{ volAltaOff }}" hint-placeholder-val="{{ false }}"><button onClick="{{ setVolAlta }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:transparent;color:#6B7280;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;">Alta</button></sc-if>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin:0 20px 20px;">
+            <div style="font-size:12px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;padding-left:4px;">Privacidade</div>
+            <div style="background:#FFFFFF;border-radius:16px;padding:2px 16px;border:1px solid #E7E8EC;">
+              <button onClick="{{ toggleLocContinua }}" style="all:unset;display:flex;align-items:center;justify-content:space-between;width:100%;padding:14px 0;cursor:pointer;borderBottom:1px solid #E7E8EC;">
+                <span style="font-size:15px;color:#1A1A1A;font-weight:500;font-family:inherit;">Localização contínua</span>
+                <sc-if value="{{ locContinuaOn }}" hint-placeholder-val="{{ true }}"><div style="width:22px;height:22px;border-radius:6px;background:#1E88E5;display:flex;align-items:center;justify-content:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/></svg></div></sc-if>
+                <sc-if value="{{ locContinuaOff }}" hint-placeholder-val="{{ false }}"><div style="width:22px;height:22px;border-radius:6px;border:2px solid #D9DBE0;"></div></sc-if>
+              </button>
+              <div style="padding:12px 0;borderBottom:1px solid #E7E8EC;">
+                <div style="font-size:13px;color:#1A1A1A;font-weight:600;margin-bottom:10px;">Frequência de atualização</div>
+                <div style="display:flex;gap:6px;background:#F0F0F3;padding:4px;border-radius:14px;">
+                  <sc-if value="{{ freq15On }}" hint-placeholder-val="{{ false }}"><button onClick="{{ setFreq15 }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:#1E88E5;color:#fff;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;">15 min</button></sc-if>
+                  <sc-if value="{{ freq15Off }}" hint-placeholder-val="{{ true }}"><button onClick="{{ setFreq15 }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:transparent;color:#6B7280;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;">15 min</button></sc-if>
+                  <sc-if value="{{ freq30On }}" hint-placeholder-val="{{ true }}"><button onClick="{{ setFreq30 }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:#1E88E5;color:#fff;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;">30 min</button></sc-if>
+                  <sc-if value="{{ freq30Off }}" hint-placeholder-val="{{ false }}"><button onClick="{{ setFreq30 }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:transparent;color:#6B7280;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;">30 min</button></sc-if>
+                  <sc-if value="{{ freq60On }}" hint-placeholder-val="{{ false }}"><button onClick="{{ setFreq60 }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:#1E88E5;color:#fff;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;">60 min</button></sc-if>
+                  <sc-if value="{{ freq60Off }}" hint-placeholder-val="{{ true }}"><button onClick="{{ setFreq60 }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:transparent;color:#6B7280;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;">60 min</button></sc-if>
+                </div>
+              </div>
+              <button onClick="{{ toggleDadosAnon }}" style="all:unset;display:flex;align-items:center;justify-content:space-between;width:100%;padding:14px 0;cursor:pointer;">
+                <span style="font-size:15px;color:#1A1A1A;font-weight:500;font-family:inherit;">Dados anônimos de uso</span>
+                <sc-if value="{{ dadosAnonOn }}" hint-placeholder-val="{{ true }}"><div style="width:22px;height:22px;border-radius:6px;background:#1E88E5;display:flex;align-items:center;justify-content:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/></svg></div></sc-if>
+                <sc-if value="{{ dadosAnonOff }}" hint-placeholder-val="{{ false }}"><div style="width:22px;height:22px;border-radius:6px;border:2px solid #D9DBE0;"></div></sc-if>
+              </button>
+            </div>
+          </div>
+
+          <div style="margin:0 20px 20px;">
+            <div style="font-size:12px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;padding-left:4px;">Tema</div>
+            <div style="background:#FFFFFF;border-radius:16px;padding:14px 16px;border:1px solid #E7E8EC;">
+              <div style="display:flex;gap:6px;background:#F0F0F3;padding:4px;border-radius:14px;">
+                <sc-if value="{{ modeAutoOn }}" hint-placeholder-val="{{ true }}"><button onClick="{{ setModeAuto }}" style="flex:1;padding:10px 0;border:none;border-radius:10px;background:#1E88E5;color:#fff;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;">Automático</button></sc-if>
+                <sc-if value="{{ modeAutoOff }}" hint-placeholder-val="{{ false }}"><button onClick="{{ setModeAuto }}" style="flex:1;padding:10px 0;border:none;border-radius:10px;background:transparent;color:#6B7280;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;">Automático</button></sc-if>
+                <sc-if value="{{ modeLightOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ setModeLight }}" style="flex:1;padding:10px 0;border:none;border-radius:10px;background:#1E88E5;color:#fff;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;">Claro</button></sc-if>
+                <sc-if value="{{ modeLightOff }}" hint-placeholder-val="{{ true }}"><button onClick="{{ setModeLight }}" style="flex:1;padding:10px 0;border:none;border-radius:10px;background:transparent;color:#6B7280;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;">Claro</button></sc-if>
+                <sc-if value="{{ modeDarkOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ setModeDark }}" style="flex:1;padding:10px 0;border:none;border-radius:10px;background:#1E88E5;color:#fff;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;">Escuro</button></sc-if>
+                <sc-if value="{{ modeDarkOff }}" hint-placeholder-val="{{ true }}"><button onClick="{{ setModeDark }}" style="flex:1;padding:10px 0;border:none;border-radius:10px;background:transparent;color:#6B7280;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;">Escuro</button></sc-if>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin:0 20px 24px;">
+            <div style="font-size:12px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;padding-left:4px;">Sobre</div>
+            <div style="background:#FFFFFF;border-radius:16px;padding:14px 16px;border:1px solid #E7E8EC;display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:15px;color:#1A1A1A;font-weight:500;">Versão</span>
+              <span style="font-size:14px;color:#6B7280;font-weight:600;">1.0.0</span>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;min-height:100%;background:#121212;font-family:'Inter',system-ui,sans-serif;">
+          <div style="display:flex;align-items:center;gap:12px;padding:20px 20px 16px;background:#1A1A1A;">
+            <button onClick="{{ closeSettings }}" style="all:unset;cursor:pointer;display:flex;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="#F2F2F2" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </button>
+            <span style="font-size:20px;font-weight:800;color:#F2F2F2;">Configurações</span>
+          </div>
+
+          <div style="margin:8px 20px 20px;">
+            <div style="font-size:12px;font-weight:700;color:#B0B4BA;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;padding-left:4px;">Notificações</div>
+            <div style="background:#1E1E1E;border-radius:16px;padding:2px 16px;border:1px solid #2C2D31;">
+              <button onClick="{{ toggleSevero }}" style="all:unset;display:flex;align-items:center;justify-content:space-between;width:100%;padding:14px 0;cursor:pointer;borderBottom:1px solid #2C2D31;">
+                <span style="font-size:15px;color:#F2F2F2;font-weight:500;font-family:inherit;">Alertas Severos</span>
+                <sc-if value="{{ notifSeveroOn }}" hint-placeholder-val="{{ true }}"><div style="width:22px;height:22px;border-radius:6px;background:#5AA6EE;display:flex;align-items:center;justify-content:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6" stroke="#121212" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/></svg></div></sc-if>
+                <sc-if value="{{ notifSeveroOff }}" hint-placeholder-val="{{ false }}"><div style="width:22px;height:22px;border-radius:6px;border:2px solid #3A3B3F;"></div></sc-if>
+              </button>
+              <button onClick="{{ toggleGranizo }}" style="all:unset;display:flex;align-items:center;justify-content:space-between;width:100%;padding:14px 0;cursor:pointer;borderBottom:1px solid #2C2D31;">
+                <span style="font-size:15px;color:#F2F2F2;font-weight:500;font-family:inherit;">Avisos de Granizo</span>
+                <sc-if value="{{ notifGranizoOn }}" hint-placeholder-val="{{ true }}"><div style="width:22px;height:22px;border-radius:6px;background:#5AA6EE;display:flex;align-items:center;justify-content:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6" stroke="#121212" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/></svg></div></sc-if>
+                <sc-if value="{{ notifGranizoOff }}" hint-placeholder-val="{{ false }}"><div style="width:22px;height:22px;border-radius:6px;border:2px solid #3A3B3F;"></div></sc-if>
+              </button>
+              <button onClick="{{ toggleTornado }}" style="all:unset;display:flex;align-items:center;justify-content:space-between;width:100%;padding:14px 0;cursor:pointer;borderBottom:1px solid #2C2D31;">
+                <span style="font-size:15px;color:#F2F2F2;font-weight:500;font-family:inherit;">Avisos de Tornado</span>
+                <sc-if value="{{ notifTornadoOn }}" hint-placeholder-val="{{ true }}"><div style="width:22px;height:22px;border-radius:6px;background:#5AA6EE;display:flex;align-items:center;justify-content:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6" stroke="#121212" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/></svg></div></sc-if>
+                <sc-if value="{{ notifTornadoOff }}" hint-placeholder-val="{{ false }}"><div style="width:22px;height:22px;border-radius:6px;border:2px solid #3A3B3F;"></div></sc-if>
+              </button>
+              <button onClick="{{ toggleRajadas }}" style="all:unset;display:flex;align-items:center;justify-content:space-between;width:100%;padding:14px 0;cursor:pointer;">
+                <span style="font-size:15px;color:#F2F2F2;font-weight:500;font-family:inherit;">Avisos de Rajadas</span>
+                <sc-if value="{{ notifRajadasOn }}" hint-placeholder-val="{{ true }}"><div style="width:22px;height:22px;border-radius:6px;background:#5AA6EE;display:flex;align-items:center;justify-content:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6" stroke="#121212" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/></svg></div></sc-if>
+                <sc-if value="{{ notifRajadasOff }}" hint-placeholder-val="{{ false }}"><div style="width:22px;height:22px;border-radius:6px;border:2px solid #3A3B3F;"></div></sc-if>
+              </button>
+            </div>
+
+            <div style="margin-top:14px;background:#1E1E1E;border-radius:16px;padding:14px 16px;border:1px solid #2C2D31;">
+              <div style="font-size:13px;color:#F2F2F2;font-weight:600;margin-bottom:10px;">Volume do alerta</div>
+              <div style="display:flex;gap:6px;background:#212225;padding:4px;border-radius:14px;">
+                <sc-if value="{{ volBaixaOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ setVolBaixa }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:#5AA6EE;color:#121212;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;">Baixa</button></sc-if>
+                <sc-if value="{{ volBaixaOff }}" hint-placeholder-val="{{ true }}"><button onClick="{{ setVolBaixa }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:transparent;color:#B0B4BA;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;">Baixa</button></sc-if>
+                <sc-if value="{{ volMediaOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ setVolMedia }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:#5AA6EE;color:#121212;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;">Média</button></sc-if>
+                <sc-if value="{{ volMediaOff }}" hint-placeholder-val="{{ true }}"><button onClick="{{ setVolMedia }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:transparent;color:#B0B4BA;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;">Média</button></sc-if>
+                <sc-if value="{{ volAltaOn }}" hint-placeholder-val="{{ true }}"><button onClick="{{ setVolAlta }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:#5AA6EE;color:#121212;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;">Alta</button></sc-if>
+                <sc-if value="{{ volAltaOff }}" hint-placeholder-val="{{ false }}"><button onClick="{{ setVolAlta }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:transparent;color:#B0B4BA;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;">Alta</button></sc-if>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin:0 20px 20px;">
+            <div style="font-size:12px;font-weight:700;color:#B0B4BA;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;padding-left:4px;">Privacidade</div>
+            <div style="background:#1E1E1E;border-radius:16px;padding:2px 16px;border:1px solid #2C2D31;">
+              <button onClick="{{ toggleLocContinua }}" style="all:unset;display:flex;align-items:center;justify-content:space-between;width:100%;padding:14px 0;cursor:pointer;borderBottom:1px solid #2C2D31;">
+                <span style="font-size:15px;color:#F2F2F2;font-weight:500;font-family:inherit;">Localização contínua</span>
+                <sc-if value="{{ locContinuaOn }}" hint-placeholder-val="{{ true }}"><div style="width:22px;height:22px;border-radius:6px;background:#5AA6EE;display:flex;align-items:center;justify-content:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6" stroke="#121212" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/></svg></div></sc-if>
+                <sc-if value="{{ locContinuaOff }}" hint-placeholder-val="{{ false }}"><div style="width:22px;height:22px;border-radius:6px;border:2px solid #3A3B3F;"></div></sc-if>
+              </button>
+              <div style="padding:12px 0;borderBottom:1px solid #2C2D31;">
+                <div style="font-size:13px;color:#F2F2F2;font-weight:600;margin-bottom:10px;">Frequência de atualização</div>
+                <div style="display:flex;gap:6px;background:#212225;padding:4px;border-radius:14px;">
+                  <sc-if value="{{ freq15On }}" hint-placeholder-val="{{ false }}"><button onClick="{{ setFreq15 }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:#5AA6EE;color:#121212;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;">15 min</button></sc-if>
+                  <sc-if value="{{ freq15Off }}" hint-placeholder-val="{{ true }}"><button onClick="{{ setFreq15 }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:transparent;color:#B0B4BA;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;">15 min</button></sc-if>
+                  <sc-if value="{{ freq30On }}" hint-placeholder-val="{{ true }}"><button onClick="{{ setFreq30 }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:#5AA6EE;color:#121212;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;">30 min</button></sc-if>
+                  <sc-if value="{{ freq30Off }}" hint-placeholder-val="{{ false }}"><button onClick="{{ setFreq30 }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:transparent;color:#B0B4BA;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;">30 min</button></sc-if>
+                  <sc-if value="{{ freq60On }}" hint-placeholder-val="{{ false }}"><button onClick="{{ setFreq60 }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:#5AA6EE;color:#121212;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;">60 min</button></sc-if>
+                  <sc-if value="{{ freq60Off }}" hint-placeholder-val="{{ true }}"><button onClick="{{ setFreq60 }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:transparent;color:#B0B4BA;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;">60 min</button></sc-if>
+                </div>
+              </div>
+              <button onClick="{{ toggleDadosAnon }}" style="all:unset;display:flex;align-items:center;justify-content:space-between;width:100%;padding:14px 0;cursor:pointer;">
+                <span style="font-size:15px;color:#F2F2F2;font-weight:500;font-family:inherit;">Dados anônimos de uso</span>
+                <sc-if value="{{ dadosAnonOn }}" hint-placeholder-val="{{ true }}"><div style="width:22px;height:22px;border-radius:6px;background:#5AA6EE;display:flex;align-items:center;justify-content:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6" stroke="#121212" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/></svg></div></sc-if>
+                <sc-if value="{{ dadosAnonOff }}" hint-placeholder-val="{{ false }}"><div style="width:22px;height:22px;border-radius:6px;border:2px solid #3A3B3F;"></div></sc-if>
+              </button>
+            </div>
+          </div>
+
+          <div style="margin:0 20px 20px;">
+            <div style="font-size:12px;font-weight:700;color:#B0B4BA;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;padding-left:4px;">Tema</div>
+            <div style="background:#1E1E1E;border-radius:16px;padding:14px 16px;border:1px solid #2C2D31;">
+              <div style="display:flex;gap:6px;background:#212225;padding:4px;border-radius:14px;">
+                <sc-if value="{{ modeAutoOn }}" hint-placeholder-val="{{ true }}"><button onClick="{{ setModeAuto }}" style="flex:1;padding:10px 0;border:none;border-radius:10px;background:#5AA6EE;color:#121212;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;">Automático</button></sc-if>
+                <sc-if value="{{ modeAutoOff }}" hint-placeholder-val="{{ false }}"><button onClick="{{ setModeAuto }}" style="flex:1;padding:10px 0;border:none;border-radius:10px;background:transparent;color:#B0B4BA;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;">Automático</button></sc-if>
+                <sc-if value="{{ modeLightOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ setModeLight }}" style="flex:1;padding:10px 0;border:none;border-radius:10px;background:#5AA6EE;color:#121212;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;">Claro</button></sc-if>
+                <sc-if value="{{ modeLightOff }}" hint-placeholder-val="{{ true }}"><button onClick="{{ setModeLight }}" style="flex:1;padding:10px 0;border:none;border-radius:10px;background:transparent;color:#B0B4BA;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;">Claro</button></sc-if>
+                <sc-if value="{{ modeDarkOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ setModeDark }}" style="flex:1;padding:10px 0;border:none;border-radius:10px;background:#5AA6EE;color:#121212;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;">Escuro</button></sc-if>
+                <sc-if value="{{ modeDarkOff }}" hint-placeholder-val="{{ true }}"><button onClick="{{ setModeDark }}" style="flex:1;padding:10px 0;border:none;border-radius:10px;background:transparent;color:#B0B4BA;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;">Escuro</button></sc-if>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin:0 20px 24px;">
+            <div style="font-size:12px;font-weight:700;color:#B0B4BA;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;padding-left:4px;">Sobre</div>
+            <div style="background:#1E1E1E;border-radius:16px;padding:14px 16px;border:1px solid #2C2D31;display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:15px;color:#F2F2F2;font-weight:500;">Versão</span>
+              <span style="font-size:14px;color:#B0B4BA;font-weight:600;">1.0.0</span>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+    </sc-if>
+
+    <sc-if value="{{ isHourly }}" hint-placeholder-val="{{ false }}">
+      <sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;min-height:100%;background:#FAFAFA;font-family:'Inter',system-ui,sans-serif;">
+          <div style="display:flex;align-items:center;gap:12px;padding:20px 20px 16px;background:#FFFFFF;">
+            <button onClick="{{ closeHourly }}" style="all:unset;cursor:pointer;display:flex;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="#1A1A1A" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </button>
+            <span style="font-size:20px;font-weight:800;color:#1A1A1A;">Previsão Hora-a-Hora</span>
+          </div>
+          <div style="padding:14px 20px 20px;flex:1;overflow-y:auto;">
+            <sc-for list="{{ hourlyList }}" as="item" hint-placeholder-count="8">
+              <div style="background:#FFFFFF;border-radius:16px;border:1px solid #E7E8EC;padding:14px 16px;margin-bottom:10px;">
+                <div style="display:flex;align-items:center;gap:12px;">
+                  <span style="font-size:13px;font-weight:700;color:#1A1A1A;width:42px;flex-shrink:0;">{{ item.time }}</span>
+                  <sc-if value="{{ item.cloudy }}" hint-placeholder-val="{{ true }}"><svg width="22" height="22" viewBox="0 0 24 24"><ellipse cx="13" cy="15" rx="8" ry="6" fill="#9AA1AC"/><ellipse cx="8" cy="13" rx="5" ry="4.2" fill="#9AA1AC"/></svg></sc-if>
+                  <sc-if value="{{ item.partly }}" hint-placeholder-val="{{ false }}"><svg width="22" height="22" viewBox="0 0 24 24"><circle cx="9" cy="12" r="6" fill="#FBC02D"/><ellipse cx="14" cy="16" rx="7" ry="5" fill="#9AA1AC"/></svg></sc-if>
+                  <sc-if value="{{ item.clear }}" hint-placeholder-val="{{ false }}"><svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="#FBC02D"/></svg></sc-if>
+                  <span style="flex:1;font-size:13px;color:#6B7280;font-weight:500;">{{ item.condition }}</span>
+                  <span style="font-size:16px;font-weight:800;color:#1A1A1A;">{{ item.temp }}°</span>
+                </div>
+                <div style="display:flex;gap:18px;margin-top:10px;padding-top:10px;borderTop:1px solid #F0F0F3;">
+                  <div style="display:flex;align-items:center;gap:5px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24"><path d="M12 3s7 8.2 7 13a7 7 0 1 1-14 0c0-4.8 7-13 7-13Z" fill="#1E88E5"/></svg>
+                    <span style="font-size:11px;color:#6B7280;font-weight:600;">{{ item.precip }}%</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:5px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M3 8h10.5a2.75 2.75 0 1 0-2.75-2.75" stroke="#6B7280" strokeWidth="2" strokeLinecap="round"/><path d="M3 13.5h14a2.75 2.75 0 1 1-2.75 2.75" stroke="#6B7280" strokeWidth="2" strokeLinecap="round"/></svg>
+                    <span style="font-size:11px;color:#6B7280;font-weight:600;">{{ item.wind }} km/h</span>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;min-height:100%;background:#121212;font-family:'Inter',system-ui,sans-serif;">
+          <div style="display:flex;align-items:center;gap:12px;padding:20px 20px 16px;background:#1A1A1A;">
+            <button onClick="{{ closeHourly }}" style="all:unset;cursor:pointer;display:flex;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="#F2F2F2" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </button>
+            <span style="font-size:20px;font-weight:800;color:#F2F2F2;">Previsão Hora-a-Hora</span>
+          </div>
+          <div style="padding:14px 20px 20px;flex:1;overflow-y:auto;">
+            <sc-for list="{{ hourlyList }}" as="item" hint-placeholder-count="8">
+              <div style="background:#1E1E1E;border-radius:16px;border:1px solid #2C2D31;padding:14px 16px;margin-bottom:10px;">
+                <div style="display:flex;align-items:center;gap:12px;">
+                  <span style="font-size:13px;font-weight:700;color:#F2F2F2;width:42px;flex-shrink:0;">{{ item.time }}</span>
+                  <sc-if value="{{ item.cloudy }}" hint-placeholder-val="{{ true }}"><svg width="22" height="22" viewBox="0 0 24 24"><ellipse cx="13" cy="15" rx="8" ry="6" fill="#8B9099"/><ellipse cx="8" cy="13" rx="5" ry="4.2" fill="#8B9099"/></svg></sc-if>
+                  <sc-if value="{{ item.partly }}" hint-placeholder-val="{{ false }}"><svg width="22" height="22" viewBox="0 0 24 24"><circle cx="9" cy="12" r="6" fill="#FBC02D"/><ellipse cx="14" cy="16" rx="7" ry="5" fill="#8B9099"/></svg></sc-if>
+                  <sc-if value="{{ item.clear }}" hint-placeholder-val="{{ false }}"><svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="#FBC02D"/></svg></sc-if>
+                  <span style="flex:1;font-size:13px;color:#B0B4BA;font-weight:500;">{{ item.condition }}</span>
+                  <span style="font-size:16px;font-weight:800;color:#F2F2F2;">{{ item.temp }}°</span>
+                </div>
+                <div style="display:flex;gap:18px;margin-top:10px;padding-top:10px;borderTop:1px solid #2C2D31;">
+                  <div style="display:flex;align-items:center;gap:5px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24"><path d="M12 3s7 8.2 7 13a7 7 0 1 1-14 0c0-4.8 7-13 7-13Z" fill="#5AA6EE"/></svg>
+                    <span style="font-size:11px;color:#B0B4BA;font-weight:600;">{{ item.precip }}%</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:5px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M3 8h10.5a2.75 2.75 0 1 0-2.75-2.75" stroke="#B0B4BA" strokeWidth="2" strokeLinecap="round"/><path d="M3 13.5h14a2.75 2.75 0 1 1-2.75 2.75" stroke="#B0B4BA" strokeWidth="2" strokeLinecap="round"/></svg>
+                    <span style="font-size:11px;color:#B0B4BA;font-weight:600;">{{ item.wind }} km/h</span>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+    </sc-if>
+
+    <sc-if value="{{ isLocations }}" hint-placeholder-val="{{ false }}">
+      <sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;min-height:100%;background:#FAFAFA;font-family:'Inter',system-ui,sans-serif;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 20px 16px;background:#FFFFFF;">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <button onClick="{{ closeLocations }}" style="all:unset;cursor:pointer;display:flex;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="#1A1A1A" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </button>
+              <span style="font-size:20px;font-weight:800;color:#1A1A1A;">Localizações</span>
+            </div>
+            <button onClick="{{ toggleAddCity }}" style="width:36px;height:36px;border-radius:18px;background:#EAF3FC;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#1E88E5" strokeWidth="2.4" strokeLinecap="round"/></svg>
+            </button>
+          </div>
+          <sc-if value="{{ addingCityOn }}" hint-placeholder-val="{{ false }}">
+            <div style="margin:14px 20px 4px;background:#F0F0F3;border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:8px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#9AA1AC" strokeWidth="2"/><path d="M20 20l-4-4" stroke="#9AA1AC" strokeWidth="2" strokeLinecap="round"/></svg>
+              <input type="text" value="{{ searchQuery }}" onChange="{{ onSearchChange }}" placeholder="Buscar cidade..." style="border:none;background:transparent;outline:none;font-size:14px;color:#1A1A1A;font-family:inherit;flex:1;"/>
+            </div>
+            <sc-if value="{{ searchHasQuery }}" hint-placeholder-val="{{ false }}">
+              <div style="margin:8px 20px 4px;background:#FFFFFF;border-radius:14px;border:1px solid #E7E8EC;overflow:hidden;">
+                <sc-for list="{{ filteredCityResults }}" as="c" hint-placeholder-count="2">
+                  <button onClick="{{ c.add }}" style="all:unset;cursor:pointer;display:flex;align-items:center;justify-content:space-between;width:100%;padding:12px 14px;borderBottom:1px solid #F0F0F3;font-family:inherit;">
+                    <span style="font-size:14px;color:#1A1A1A;">{{ c.name }}</span>
+                    <span style="font-size:12px;color:#1E88E5;font-weight:700;">Adicionar</span>
+                  </button>
+                </sc-for>
+              </div>
+            </sc-if>
+            <button onClick="{{ toggleAddCity }}" style="all:unset;cursor:pointer;display:block;margin:10px 20px 4px;font-size:13px;font-weight:700;color:#1E88E5;font-family:inherit;">Cancelar</button>
+          </sc-if>
+          <div style="padding:14px 20px 20px;flex:1;">
+            <sc-for list="{{ favoritesList }}" as="loc" hint-placeholder-count="4">
+              <div style="background:#FFFFFF;border-radius:16px;border:1px solid #E7E8EC;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;">
+                <sc-if value="{{ loc.cloudy }}" hint-placeholder-val="{{ true }}"><svg width="26" height="26" viewBox="0 0 24 24"><ellipse cx="13" cy="15" rx="8" ry="6" fill="#9AA1AC"/><ellipse cx="8" cy="13" rx="5" ry="4.2" fill="#9AA1AC"/></svg></sc-if>
+                <sc-if value="{{ loc.rainy }}" hint-placeholder-val="{{ false }}"><svg width="26" height="26" viewBox="0 0 24 24"><ellipse cx="13" cy="12" rx="8" ry="6" fill="#9AA1AC"/><path d="M9 20l-1.5 3M14 20l-1.5 3M19 20l-1.5 3" stroke="#1E88E5" strokeWidth="2" strokeLinecap="round"/></svg></sc-if>
+                <sc-if value="{{ loc.sunny }}" hint-placeholder-val="{{ false }}"><svg width="26" height="26" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="#FBC02D"/></svg></sc-if>
+                <div style="flex:1;">
+                  <div style="font-size:15px;font-weight:700;color:#1A1A1A;">{{ loc.name }}</div>
+                  <sc-if value="{{ loc.current }}" hint-placeholder-val="{{ true }}"><span style="font-size:11px;color:#1E88E5;font-weight:700;">Localização atual</span></sc-if>
+                </div>
+                <span style="font-size:20px;font-weight:800;color:#1A1A1A;">{{ loc.temp }}°</span>
+                <sc-if value="{{ loc.notCurrent }}" hint-placeholder-val="{{ false }}">
+                  <button onClick="{{ loc.remove }}" style="all:unset;cursor:pointer;display:flex;padding:4px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-9 0 1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13" stroke="#9AA1AC" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  </button>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;min-height:100%;background:#121212;font-family:'Inter',system-ui,sans-serif;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 20px 16px;background:#1A1A1A;">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <button onClick="{{ closeLocations }}" style="all:unset;cursor:pointer;display:flex;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="#F2F2F2" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </button>
+              <span style="font-size:20px;font-weight:800;color:#F2F2F2;">Localizações</span>
+            </div>
+            <button onClick="{{ toggleAddCity }}" style="width:36px;height:36px;border-radius:18px;background:#1A2E3F;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#5AA6EE" strokeWidth="2.4" strokeLinecap="round"/></svg>
+            </button>
+          </div>
+          <sc-if value="{{ addingCityOn }}" hint-placeholder-val="{{ false }}">
+            <div style="margin:14px 20px 4px;background:#212225;border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:8px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#8B9099" strokeWidth="2"/><path d="M20 20l-4-4" stroke="#8B9099" strokeWidth="2" strokeLinecap="round"/></svg>
+              <input type="text" value="{{ searchQuery }}" onChange="{{ onSearchChange }}" placeholder="Buscar cidade..." style="border:none;background:transparent;outline:none;font-size:14px;color:#F2F2F2;font-family:inherit;flex:1;"/>
+            </div>
+            <sc-if value="{{ searchHasQuery }}" hint-placeholder-val="{{ false }}">
+              <div style="margin:8px 20px 4px;background:#1E1E1E;border-radius:14px;border:1px solid #2C2D31;overflow:hidden;">
+                <sc-for list="{{ filteredCityResults }}" as="c" hint-placeholder-count="2">
+                  <button onClick="{{ c.add }}" style="all:unset;cursor:pointer;display:flex;align-items:center;justify-content:space-between;width:100%;padding:12px 14px;borderBottom:1px solid #2C2D31;font-family:inherit;">
+                    <span style="font-size:14px;color:#F2F2F2;">{{ c.name }}</span>
+                    <span style="font-size:12px;color:#5AA6EE;font-weight:700;">Adicionar</span>
+                  </button>
+                </sc-for>
+              </div>
+            </sc-if>
+            <button onClick="{{ toggleAddCity }}" style="all:unset;cursor:pointer;display:block;margin:10px 20px 4px;font-size:13px;font-weight:700;color:#5AA6EE;font-family:inherit;">Cancelar</button>
+          </sc-if>
+          <div style="padding:14px 20px 20px;flex:1;">
+            <sc-for list="{{ favoritesList }}" as="loc" hint-placeholder-count="4">
+              <div style="background:#1E1E1E;border-radius:16px;border:1px solid #2C2D31;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;">
+                <sc-if value="{{ loc.cloudy }}" hint-placeholder-val="{{ true }}"><svg width="26" height="26" viewBox="0 0 24 24"><ellipse cx="13" cy="15" rx="8" ry="6" fill="#8B9099"/><ellipse cx="8" cy="13" rx="5" ry="4.2" fill="#8B9099"/></svg></sc-if>
+                <sc-if value="{{ loc.rainy }}" hint-placeholder-val="{{ false }}"><svg width="26" height="26" viewBox="0 0 24 24"><ellipse cx="13" cy="12" rx="8" ry="6" fill="#8B9099"/><path d="M9 20l-1.5 3M14 20l-1.5 3M19 20l-1.5 3" stroke="#5AA6EE" strokeWidth="2" strokeLinecap="round"/></svg></sc-if>
+                <sc-if value="{{ loc.sunny }}" hint-placeholder-val="{{ false }}"><svg width="26" height="26" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="#FBC02D"/></svg></sc-if>
+                <div style="flex:1;">
+                  <div style="font-size:15px;font-weight:700;color:#F2F2F2;">{{ loc.name }}</div>
+                  <sc-if value="{{ loc.current }}" hint-placeholder-val="{{ true }}"><span style="font-size:11px;color:#5AA6EE;font-weight:700;">Localização atual</span></sc-if>
+                </div>
+                <span style="font-size:20px;font-weight:800;color:#F2F2F2;">{{ loc.temp }}°</span>
+                <sc-if value="{{ loc.notCurrent }}" hint-placeholder-val="{{ false }}">
+                  <button onClick="{{ loc.remove }}" style="all:unset;cursor:pointer;display:flex;padding:4px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-9 0 1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13" stroke="#8B9099" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  </button>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+    </sc-if>
+
+    <sc-if value="{{ isHistory }}" hint-placeholder-val="{{ false }}">
+      <sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;min-height:100%;background:#FAFAFA;font-family:'Inter',system-ui,sans-serif;">
+          <div style="display:flex;align-items:center;gap:12px;padding:20px 20px 16px;background:#FFFFFF;">
+            <button onClick="{{ closeHistory }}" style="all:unset;cursor:pointer;display:flex;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="#1A1A1A" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </button>
+            <span style="font-size:20px;font-weight:800;color:#1A1A1A;">Histórico de Alertas</span>
+          </div>
+          <div style="padding:14px 20px 20px;">
+            <sc-for list="{{ historyList }}" as="h" hint-placeholder-count="4">
+              <div style="background:#FFFFFF;border-radius:16px;border:1px solid #E7E8EC;padding:14px 16px;margin-bottom:10px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                  <span style="font-size:12px;color:#6B7280;font-weight:600;">{{ h.date }}</span>
+                  <sc-if value="{{ h.highSeverity }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;font-weight:700;color:#D32F2F;background:#FDECEA;padding:3px 8px;border-radius:8px;">Alta</span></sc-if>
+                  <sc-if value="{{ h.mediumSeverity }}" hint-placeholder-val="{{ true }}"><span style="font-size:11px;font-weight:700;color:#B8860B;background:#FFF6DD;padding:3px 8px;border-radius:8px;">Média</span></sc-if>
+                  <sc-if value="{{ h.lowSeverity }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;font-weight:700;color:#388E3C;background:#E7F5E9;padding:3px 8px;border-radius:8px;">Baixa</span></sc-if>
+                </div>
+                <div style="font-size:15px;font-weight:700;color:#1A1A1A;margin-top:6px;">{{ h.type }}</div>
+                <div style="font-size:13px;color:#6B7280;margin-top:4px;line-height:1.4;">{{ h.desc }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;min-height:100%;background:#121212;font-family:'Inter',system-ui,sans-serif;">
+          <div style="display:flex;align-items:center;gap:12px;padding:20px 20px 16px;background:#1A1A1A;">
+            <button onClick="{{ closeHistory }}" style="all:unset;cursor:pointer;display:flex;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="#F2F2F2" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </button>
+            <span style="font-size:20px;font-weight:800;color:#F2F2F2;">Histórico de Alertas</span>
+          </div>
+          <div style="padding:14px 20px 20px;">
+            <sc-for list="{{ historyList }}" as="h" hint-placeholder-count="4">
+              <div style="background:#1E1E1E;border-radius:16px;border:1px solid #2C2D31;padding:14px 16px;margin-bottom:10px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                  <span style="font-size:12px;color:#B0B4BA;font-weight:600;">{{ h.date }}</span>
+                  <sc-if value="{{ h.highSeverity }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;font-weight:700;color:#EF5350;background:#3A1A18;padding:3px 8px;border-radius:8px;">Alta</span></sc-if>
+                  <sc-if value="{{ h.mediumSeverity }}" hint-placeholder-val="{{ true }}"><span style="font-size:11px;font-weight:700;color:#F0C24B;background:#3A3218;padding:3px 8px;border-radius:8px;">Média</span></sc-if>
+                  <sc-if value="{{ h.lowSeverity }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;font-weight:700;color:#66BB6A;background:#1A3320;padding:3px 8px;border-radius:8px;">Baixa</span></sc-if>
+                </div>
+                <div style="font-size:15px;font-weight:700;color:#F2F2F2;margin-top:6px;">{{ h.type }}</div>
+                <div style="font-size:13px;color:#B0B4BA;margin-top:4px;line-height:1.4;">{{ h.desc }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+    </sc-if>
+
+    <sc-if value="{{ isFlowOnboarding }}" hint-placeholder-val="{{ false }}">
+      <sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;min-height:100%;background:#FAFAFA;font-family:'Inter',system-ui,sans-serif;align-items:center;justify-content:center;padding:32px;text-align:center;gap:20px;">
+          <div style="width:88px;height:88px;border-radius:44px;background:#EAF3FC;display:flex;align-items:center;justify-content:center;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none"><path d="M12 21s7-6.8 7-12.4A7 7 0 1 0 5 8.6C5 14.2 12 21 12 21Z" stroke="#1E88E5" strokeWidth="2" strokeLinejoin="round"/><circle cx="12" cy="8.6" r="2.6" fill="#1E88E5"/></svg>
+          </div>
+          <div>
+            <div style="font-size:22px;font-weight:800;color:#1A1A1A;margin-bottom:8px;">Permita a localização</div>
+            <div style="font-size:14px;color:#6B7280;line-height:1.6;max-width:280px;">Precisamos da sua localização para enviar alertas severos precisos para a sua região, mesmo com o app fechado.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:280px;margin-top:8px;">
+            <button onClick="{{ setFlowApp }}" style="padding:15px;border-radius:14px;background:#1E88E5;border:none;font-size:15px;font-weight:700;color:#fff;font-family:inherit;cursor:pointer;">Permitir localização</button>
+            <button onClick="{{ setFlowApp }}" style="padding:15px;border-radius:14px;background:transparent;border:none;font-size:14px;font-weight:600;color:#6B7280;font-family:inherit;cursor:pointer;">Agora não</button>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;min-height:100%;background:#121212;font-family:'Inter',system-ui,sans-serif;align-items:center;justify-content:center;padding:32px;text-align:center;gap:20px;">
+          <div style="width:88px;height:88px;border-radius:44px;background:#1A2E3F;display:flex;align-items:center;justify-content:center;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none"><path d="M12 21s7-6.8 7-12.4A7 7 0 1 0 5 8.6C5 14.2 12 21 12 21Z" stroke="#5AA6EE" strokeWidth="2" strokeLinejoin="round"/><circle cx="12" cy="8.6" r="2.6" fill="#5AA6EE"/></svg>
+          </div>
+          <div>
+            <div style="font-size:22px;font-weight:800;color:#F2F2F2;margin-bottom:8px;">Permita a localização</div>
+            <div style="font-size:14px;color:#B0B4BA;line-height:1.6;max-width:280px;">Precisamos da sua localização para enviar alertas severos precisos para a sua região, mesmo com o app fechado.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:280px;margin-top:8px;">
+            <button onClick="{{ setFlowApp }}" style="padding:15px;border-radius:14px;background:#5AA6EE;border:none;font-size:15px;font-weight:700;color:#121212;font-family:inherit;cursor:pointer;">Permitir localização</button>
+            <button onClick="{{ setFlowApp }}" style="padding:15px;border-radius:14px;background:transparent;border:none;font-size:14px;font-weight:600;color:#B0B4BA;font-family:inherit;cursor:pointer;">Agora não</button>
+          </div>
+        </div>
+      </sc-if>
+    </sc-if>
+
+    <sc-if value="{{ isFlowLockscreen }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;min-height:100%;background:linear-gradient(180deg,#1a1f2e,#0d1018);font-family:'Inter',system-ui,sans-serif;align-items:center;padding:52px 20px 20px;">
+        <div style="font-size:56px;font-weight:300;color:#fff;letter-spacing:1px;">14:32</div>
+        <div style="font-size:14px;color:#B9C0CC;margin-top:4px;">Domingo, 23 de agosto</div>
+        <div style="flex:1;"></div>
+        <div style="width:100%;background:#20232c;border-radius:20px;padding:14px;display:flex;gap:12px;align-items:flex-start;margin-bottom:14px;">
+          <div style="width:36px;height:36px;border-radius:10px;background:#3A1A18;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 3 22.5 21H1.5Z" fill="#EF5350"/><rect x="10.8" y="9.2" width="2.4" height="5.6" rx="1.2" fill="#1a1a1a"/><circle cx="12" cy="17" r="1.3" fill="#1a1a1a"/></svg>
+          </div>
+          <div style="flex:1;">
+            <span style="font-size:12px;color:#8B93A3;font-weight:600;">Weather • agora</span>
+            <div style="font-size:14px;font-weight:700;color:#fff;margin-top:2px;">Aviso de Tornado</div>
+            <div style="font-size:12.5px;color:#B9C0CC;margin-top:2px;line-height:1.4;">Vigência até 17:30. Toque para ver detalhes e recomendações de segurança.</div>
+          </div>
+        </div>
+        <div style="font-size:12px;color:#8B93A3;margin-bottom:8px;">Deslize para cima para abrir</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isFlowStates }}" hint-placeholder-val="{{ false }}">
+      <sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;min-height:100%;background:#FAFAFA;font-family:'Inter',system-ui,sans-serif;">
+          <div style="padding:20px 20px 16px;background:#FFFFFF;">
+            <span style="font-size:20px;font-weight:800;color:#1A1A1A;">Estados do App</span>
+          </div>
+          <div style="margin:16px 20px 0;display:flex;gap:6px;background:#F0F0F3;padding:4px;border-radius:14px;">
+            <sc-if value="{{ emptyNoAlertsOn }}" hint-placeholder-val="{{ true }}"><button onClick="{{ setEmptyNoAlerts }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:#1E88E5;color:#fff;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;">Sem alertas</button></sc-if>
+            <sc-if value="{{ emptyNoAlertsOff }}" hint-placeholder-val="{{ false }}"><button onClick="{{ setEmptyNoAlerts }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:transparent;color:#6B7280;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;">Sem alertas</button></sc-if>
+            <sc-if value="{{ emptyNoConnOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ setEmptyNoConn }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:#1E88E5;color:#fff;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;">Sem conexão</button></sc-if>
+            <sc-if value="{{ emptyNoConnOff }}" hint-placeholder-val="{{ true }}"><button onClick="{{ setEmptyNoConn }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:transparent;color:#6B7280;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;">Sem conexão</button></sc-if>
+            <sc-if value="{{ emptyNoPermOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ setEmptyNoPerm }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:#1E88E5;color:#fff;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;">Sem permissão</button></sc-if>
+            <sc-if value="{{ emptyNoPermOff }}" hint-placeholder-val="{{ true }}"><button onClick="{{ setEmptyNoPerm }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:transparent;color:#6B7280;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;">Sem permissão</button></sc-if>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:40px;text-align:center;">
+            <sc-if value="{{ emptyNoAlertsOn }}" hint-placeholder-val="{{ true }}">
+              <svg width="56" height="56" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#E7F5E9"/><path d="M7 12.5l3 3 7-7" stroke="#388E3C" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              <div style="font-size:16px;font-weight:700;color:#1A1A1A;">Tudo tranquilo por aqui</div>
+              <div style="font-size:13px;color:#6B7280;max-width:220px;line-height:1.5;">Nenhum alerta ativo na sua região no momento.</div>
+            </sc-if>
+            <sc-if value="{{ emptyNoConnOn }}" hint-placeholder-val="{{ false }}">
+              <svg width="56" height="56" viewBox="0 0 24 24" fill="none"><path d="M3 3l18 18" stroke="#9AA1AC" strokeWidth="2" strokeLinecap="round"/><path d="M5 8.5a15 15 0 0 1 6-3M12 18.5v.01M8.5 15a7 7 0 0 1 3-1.7M15.5 12a11 11 0 0 1 2.7 1.4M19 8.5a15 15 0 0 1 1.6 1.3" stroke="#9AA1AC" strokeWidth="2" strokeLinecap="round"/></svg>
+              <div style="font-size:16px;font-weight:700;color:#1A1A1A;">Sem conexão</div>
+              <div style="font-size:13px;color:#6B7280;max-width:220px;line-height:1.5;">Não foi possível atualizar o clima. Verifique sua internet.</div>
+              <button style="margin-top:6px;padding:12px 20px;border-radius:12px;background:#1E88E5;border:none;font-size:14px;font-weight:700;color:#fff;font-family:inherit;cursor:pointer;">Tentar novamente</button>
+            </sc-if>
+            <sc-if value="{{ emptyNoPermOn }}" hint-placeholder-val="{{ false }}">
+              <svg width="56" height="56" viewBox="0 0 24 24" fill="none"><path d="M12 21s7-6.8 7-12.4A7 7 0 1 0 5 8.6C5 14.2 12 21 12 21Z" stroke="#9AA1AC" strokeWidth="2" strokeLinejoin="round"/><path d="M3 3l18 18" stroke="#9AA1AC" strokeWidth="2" strokeLinecap="round"/></svg>
+              <div style="font-size:16px;font-weight:700;color:#1A1A1A;">Localização desativada</div>
+              <div style="font-size:13px;color:#6B7280;max-width:220px;line-height:1.5;">Ative a localização para receber alertas da sua região.</div>
+              <button onClick="{{ goToSettingsFromStates }}" style="margin-top:6px;padding:12px 20px;border-radius:12px;background:#1E88E5;border:none;font-size:14px;font-weight:700;color:#fff;font-family:inherit;cursor:pointer;">Abrir configurações</button>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;min-height:100%;background:#121212;font-family:'Inter',system-ui,sans-serif;">
+          <div style="padding:20px 20px 16px;background:#1A1A1A;">
+            <span style="font-size:20px;font-weight:800;color:#F2F2F2;">Estados do App</span>
+          </div>
+          <div style="margin:16px 20px 0;display:flex;gap:6px;background:#212225;padding:4px;border-radius:14px;">
+            <sc-if value="{{ emptyNoAlertsOn }}" hint-placeholder-val="{{ true }}"><button onClick="{{ setEmptyNoAlerts }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:#5AA6EE;color:#121212;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;">Sem alertas</button></sc-if>
+            <sc-if value="{{ emptyNoAlertsOff }}" hint-placeholder-val="{{ false }}"><button onClick="{{ setEmptyNoAlerts }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:transparent;color:#B0B4BA;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;">Sem alertas</button></sc-if>
+            <sc-if value="{{ emptyNoConnOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ setEmptyNoConn }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:#5AA6EE;color:#121212;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;">Sem conexão</button></sc-if>
+            <sc-if value="{{ emptyNoConnOff }}" hint-placeholder-val="{{ true }}"><button onClick="{{ setEmptyNoConn }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:transparent;color:#B0B4BA;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;">Sem conexão</button></sc-if>
+            <sc-if value="{{ emptyNoPermOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ setEmptyNoPerm }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:#5AA6EE;color:#121212;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;">Sem permissão</button></sc-if>
+            <sc-if value="{{ emptyNoPermOff }}" hint-placeholder-val="{{ true }}"><button onClick="{{ setEmptyNoPerm }}" style="flex:1;padding:9px 0;border:none;border-radius:10px;background:transparent;color:#B0B4BA;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;">Sem permissão</button></sc-if>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:40px;text-align:center;">
+            <sc-if value="{{ emptyNoAlertsOn }}" hint-placeholder-val="{{ true }}">
+              <svg width="56" height="56" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#1A3320"/><path d="M7 12.5l3 3 7-7" stroke="#66BB6A" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              <div style="font-size:16px;font-weight:700;color:#F2F2F2;">Tudo tranquilo por aqui</div>
+              <div style="font-size:13px;color:#B0B4BA;max-width:220px;line-height:1.5;">Nenhum alerta ativo na sua região no momento.</div>
+            </sc-if>
+            <sc-if value="{{ emptyNoConnOn }}" hint-placeholder-val="{{ false }}">
+              <svg width="56" height="56" viewBox="0 0 24 24" fill="none"><path d="M3 3l18 18" stroke="#8B9099" strokeWidth="2" strokeLinecap="round"/><path d="M5 8.5a15 15 0 0 1 6-3M12 18.5v.01M8.5 15a7 7 0 0 1 3-1.7M15.5 12a11 11 0 0 1 2.7 1.4M19 8.5a15 15 0 0 1 1.6 1.3" stroke="#8B9099" strokeWidth="2" strokeLinecap="round"/></svg>
+              <div style="font-size:16px;font-weight:700;color:#F2F2F2;">Sem conexão</div>
+              <div style="font-size:13px;color:#B0B4BA;max-width:220px;line-height:1.5;">Não foi possível atualizar o clima. Verifique sua internet.</div>
+              <button style="margin-top:6px;padding:12px 20px;border-radius:12px;background:#5AA6EE;border:none;font-size:14px;font-weight:700;color:#121212;font-family:inherit;cursor:pointer;">Tentar novamente</button>
+            </sc-if>
+            <sc-if value="{{ emptyNoPermOn }}" hint-placeholder-val="{{ false }}">
+              <svg width="56" height="56" viewBox="0 0 24 24" fill="none"><path d="M12 21s7-6.8 7-12.4A7 7 0 1 0 5 8.6C5 14.2 12 21 12 21Z" stroke="#8B9099" strokeWidth="2" strokeLinejoin="round"/><path d="M3 3l18 18" stroke="#8B9099" strokeWidth="2" strokeLinecap="round"/></svg>
+              <div style="font-size:16px;font-weight:700;color:#F2F2F2;">Localização desativada</div>
+              <div style="font-size:13px;color:#B0B4BA;max-width:220px;line-height:1.5;">Ative a localização para receber alertas da sua região.</div>
+              <button onClick="{{ goToSettingsFromStates }}" style="margin-top:6px;padding:12px 20px;border-radius:12px;background:#5AA6EE;border:none;font-size:14px;font-weight:700;color:#121212;font-family:inherit;cursor:pointer;">Abrir configurações</button>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+    </sc-if>
+
+  </x-import>
+
+  <div style="display:flex;flex-direction:column;gap:8px;align-items:center;">
+    <span style="font-size:12px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.5px;">Widget de tela inicial</span>
+    <div style="width:200px;padding:16px;border-radius:24px;background:#FFFFFF;border:1px solid #E7E8EC;boxShadow:0 2px 8px rgba(20,20,30,0.08);display:flex;flex-direction:column;gap:8px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-size:12px;font-weight:700;color:#6B7280;">Brasília</span>
+        <svg width="20" height="20" viewBox="0 0 24 24"><ellipse cx="13" cy="15" rx="8" ry="6" fill="#9AA1AC"/><ellipse cx="8" cy="13" rx="5" ry="4.2" fill="#9AA1AC"/></svg>
+      </div>
+      <div style="font-size:34px;font-weight:800;color:#1A1A1A;line-height:1;">31°</div>
+      <div style="font-size:12px;color:#6B7280;font-weight:600;">Parcialmente nublado</div>
+      <div style="margin-top:4px;padding:6px 10px;border-radius:10px;background:#FDECEA;display:flex;align-items:center;gap:6px;">
+        <svg width="12" height="12" viewBox="0 0 24 24"><path d="M12 3 22.5 21H1.5Z" fill="#D32F2F"/></svg>
+        <span style="font-size:11px;font-weight:700;color:#D32F2F;">Tornado Watch ativo</span>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div style="font-size:13px;color:#8A8F98;font-family:'Inter',system-ui,sans-serif;text-align:center;max-width:300px;">Toque na localização para o cabeçalho e no ícone de ajustes para abrir Configurações e trocar o tema. Use o seletor acima para ver Onboarding, Bloqueio e Estados.</div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    themeMode: 'auto',
+    systemDark: false,
+    screen: 'main',
+    tab: 'hoje',
+    alertOpen: false,
+    notifSevero: true, notifGranizo: true, notifTornado: true, notifRajadas: true,
+    volume: 'alta',
+    locContinua: true,
+    freq: 30,
+    dadosAnon: true,
+    addingCity: false,
+    favorites: [
+      { id: 2, name: 'São Paulo, SP', temp: 24, kind: 'rainy' },
+      { id: 3, name: 'Rio de Janeiro, RJ', temp: 29, kind: 'sunny' },
+      { id: 4, name: 'Salvador, BA', temp: 30, kind: 'sunny' },
+    ],
+    flow: 'app',
+    searchQuery: '',
+    shareOpen: false,
+    emptyState: 'noAlerts',
+    mapLayer: 'radar',
+    mapHour: '16h',
+  };
+
+  componentDidMount() {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    this.setState({ systemDark: mq.matches });
+    this._mq = mq;
+    this._onChange = (e) => this.setState({ systemDark: e.matches });
+    if (mq.addEventListener) mq.addEventListener('change', this._onChange);
+  }
+
+  componentWillUnmount() {
+    if (this._mq && this._mq.removeEventListener) this._mq.removeEventListener('change', this._onChange);
+  }
+
+  renderVals() {
+    const s = this.state;
+    const isDark = s.themeMode === 'dark' || (s.themeMode === 'auto' && s.systemDark);
+    const CITY_POOL = [
+      { name: 'Belo Horizonte, MG', kind: 'cloudy' }, { name: 'Curitiba, PR', kind: 'rainy' },
+      { name: 'Fortaleza, CE', kind: 'sunny' }, { name: 'Manaus, AM', kind: 'rainy' },
+      { name: 'Porto Alegre, RS', kind: 'cloudy' }, { name: 'Recife, PE', kind: 'sunny' },
+      { name: 'Belém, PA', kind: 'rainy' }, { name: 'Goiânia, GO', kind: 'sunny' },
+    ];
+    const takenNames = ['Brasília, DF', ...s.favorites.map((f) => f.name)];
+    const q = s.searchQuery.trim().toLowerCase();
+    const filteredCityResults = q.length > 0
+      ? CITY_POOL.filter((c) => !takenNames.includes(c.name) && c.name.toLowerCase().includes(q)).map((c) => ({
+          name: c.name,
+          add: () => this.setState((st) => ({
+            favorites: [...st.favorites, { id: Date.now(), name: c.name, temp: 22 + Math.floor(Math.random() * 10), kind: c.kind }],
+            addingCity: false, searchQuery: '',
+          })),
+        }))
+      : [];
+    return {
+      isDark, isLight: !isDark,
+      isMain: s.screen === 'main' && s.flow === 'app', isSettings: s.screen === 'settings' && s.flow === 'app',
+      isHourly: s.screen === 'hourly' && s.flow === 'app', isLocations: s.screen === 'locations' && s.flow === 'app',
+      isHistory: s.screen === 'history' && s.flow === 'app',
+      isFlowOnboarding: s.flow === 'onboarding', isFlowLockscreen: s.flow === 'lockscreen', isFlowStates: s.flow === 'states',
+      setFlowApp: () => this.setState({ flow: 'app', screen: 'main' }),
+      goToSettingsFromStates: () => this.setState({ flow: 'app', screen: 'settings' }),
+      flowTabs: [
+        { label: 'App', active: s.flow === 'app', notActive: s.flow !== 'app', select: () => this.setState({ flow: 'app' }) },
+        { label: 'Onboarding', active: s.flow === 'onboarding', notActive: s.flow !== 'onboarding', select: () => this.setState({ flow: 'onboarding' }) },
+        { label: 'Bloqueio', active: s.flow === 'lockscreen', notActive: s.flow !== 'lockscreen', select: () => this.setState({ flow: 'lockscreen' }) },
+        { label: 'Estados', active: s.flow === 'states', notActive: s.flow !== 'states', select: () => this.setState({ flow: 'states' }) },
+      ],
+      tabHoje: s.tab === 'hoje', tabSemanal: s.tab === 'semanal', tabAlertas: s.tab === 'alertas', tabMapa: s.tab === 'mapa',
+      tabHojeOff: s.tab !== 'hoje', tabSemanalOff: s.tab !== 'semanal', tabAlertasOff: s.tab !== 'alertas', tabMapaOff: s.tab !== 'mapa',
+      alertOpen: s.alertOpen, alertClosed: !s.alertOpen,
+      openSettings: () => this.setState({ screen: 'settings' }),
+      closeSettings: () => this.setState({ screen: 'main' }),
+      openHourly: () => this.setState({ screen: 'hourly' }),
+      closeHourly: () => this.setState({ screen: 'main' }),
+      openLocations: () => this.setState({ screen: 'locations' }),
+      closeLocations: () => this.setState({ screen: 'main' }),
+      openHistory: () => this.setState({ screen: 'history' }),
+      closeHistory: () => this.setState({ screen: 'main', tab: 'alertas' }),
+      shareOpen: s.shareOpen, shareClosed: !s.shareOpen,
+      toggleShare: () => this.setState((st) => ({ shareOpen: !st.shareOpen })),
+      setTabHoje: () => this.setState({ tab: 'hoje' }),
+      setTabSemanal: () => this.setState({ tab: 'semanal' }),
+      setTabAlertas: () => this.setState({ tab: 'alertas' }),
+      setTabMapa: () => this.setState({ tab: 'mapa' }),
+      toggleAlert: () => this.setState((st) => ({ alertOpen: !st.alertOpen })),
+
+      modeAutoOn: s.themeMode === 'auto', modeAutoOff: s.themeMode !== 'auto',
+      modeLightOn: s.themeMode === 'light', modeLightOff: s.themeMode !== 'light',
+      modeDarkOn: s.themeMode === 'dark', modeDarkOff: s.themeMode !== 'dark',
+      setModeAuto: () => this.setState({ themeMode: 'auto' }),
+      setModeLight: () => this.setState({ themeMode: 'light' }),
+      setModeDark: () => this.setState({ themeMode: 'dark' }),
+
+      notifSeveroOn: s.notifSevero, notifSeveroOff: !s.notifSevero,
+      notifGranizoOn: s.notifGranizo, notifGranizoOff: !s.notifGranizo,
+      notifTornadoOn: s.notifTornado, notifTornadoOff: !s.notifTornado,
+      notifRajadasOn: s.notifRajadas, notifRajadasOff: !s.notifRajadas,
+      toggleSevero: () => this.setState((st) => ({ notifSevero: !st.notifSevero })),
+      toggleGranizo: () => this.setState((st) => ({ notifGranizo: !st.notifGranizo })),
+      toggleTornado: () => this.setState((st) => ({ notifTornado: !st.notifTornado })),
+      toggleRajadas: () => this.setState((st) => ({ notifRajadas: !st.notifRajadas })),
+
+      volAltaOn: s.volume === 'alta', volAltaOff: s.volume !== 'alta',
+      volMediaOn: s.volume === 'media', volMediaOff: s.volume !== 'media',
+      volBaixaOn: s.volume === 'baixa', volBaixaOff: s.volume !== 'baixa',
+      setVolAlta: () => this.setState({ volume: 'alta' }),
+      setVolMedia: () => this.setState({ volume: 'media' }),
+      setVolBaixa: () => this.setState({ volume: 'baixa' }),
+
+      locContinuaOn: s.locContinua, locContinuaOff: !s.locContinua,
+      toggleLocContinua: () => this.setState((st) => ({ locContinua: !st.locContinua })),
+
+      freq15On: s.freq === 15, freq15Off: s.freq !== 15,
+      freq30On: s.freq === 30, freq30Off: s.freq !== 30,
+      freq60On: s.freq === 60, freq60Off: s.freq !== 60,
+      setFreq15: () => this.setState({ freq: 15 }),
+      setFreq30: () => this.setState({ freq: 30 }),
+      setFreq60: () => this.setState({ freq: 60 }),
+
+      dadosAnonOn: s.dadosAnon, dadosAnonOff: !s.dadosAnon,
+      toggleDadosAnon: () => this.setState((st) => ({ dadosAnon: !st.dadosAnon })),
+
+      addingCityOn: s.addingCity, addingCityOff: !s.addingCity,
+      toggleAddCity: () => this.setState((st) => ({ addingCity: !st.addingCity })),
+
+      hourlyList: [
+        { time: 'Agora', temp: 31, precip: 20, wind: 14, condition: 'Nublado', cloudy: true, partly: false, clear: false },
+        { time: '14h', temp: 29, precip: 60, wind: 16, condition: 'Nublado', cloudy: true, partly: false, clear: false },
+        { time: '15h', temp: 28, precip: 80, wind: 18, condition: 'Nublado', cloudy: true, partly: false, clear: false },
+        { time: '16h', temp: 26, precip: 50, wind: 20, condition: 'Nublado', cloudy: true, partly: false, clear: false },
+        { time: '17h', temp: 25, precip: 40, wind: 22, condition: 'Poucas nuvens', cloudy: false, partly: true, clear: false },
+        { time: '18h', temp: 24, precip: 20, wind: 15, condition: 'Poucas nuvens', cloudy: false, partly: true, clear: false },
+        { time: '19h', temp: 23, precip: 10, wind: 12, condition: 'Poucas nuvens', cloudy: false, partly: true, clear: false },
+        { time: '20h', temp: 22, precip: 5, wind: 10, condition: 'Céu limpo', cloudy: false, partly: false, clear: true },
+        { time: '21h', temp: 21, precip: 5, wind: 9, condition: 'Céu limpo', cloudy: false, partly: false, clear: true },
+        { time: '22h', temp: 20, precip: 0, wind: 8, condition: 'Céu limpo', cloudy: false, partly: false, clear: true },
+        { time: '23h', temp: 19, precip: 0, wind: 8, condition: 'Céu limpo', cloudy: false, partly: false, clear: true },
+        { time: '00h', temp: 19, precip: 0, wind: 7, condition: 'Céu limpo', cloudy: false, partly: false, clear: true },
+      ],
+
+      favoritesList: [
+        { id: 1, name: 'Brasília, DF', temp: 31, current: true, notCurrent: false, cloudy: true, rainy: false, sunny: false, remove: null },
+        ...s.favorites.map((f) => ({
+          id: f.id, name: f.name, temp: f.temp, current: false, notCurrent: true,
+          cloudy: f.kind === 'cloudy', rainy: f.kind === 'rainy', sunny: f.kind === 'sunny',
+          remove: () => this.setState((st) => ({ favorites: st.favorites.filter((x) => x.id !== f.id) })),
+        })),
+      ],
+
+      searchQuery: s.searchQuery,
+      onSearchChange: (e) => this.setState({ searchQuery: e.target.value }),
+      searchHasQuery: q.length > 0, searchNoQuery: q.length === 0,
+      filteredCityResults,
+
+      historyList: [
+        { date: '12 ago', type: 'Alerta de Granizo', highSeverity: false, mediumSeverity: true, lowSeverity: false, desc: 'Granizo de até 2cm registrado na região central.' },
+        { date: '05 ago', type: 'Aviso de Rajadas', highSeverity: false, mediumSeverity: false, lowSeverity: true, desc: 'Rajadas de até 55 km/h previstas para o período da tarde.' },
+        { date: '28 jul', type: 'Tornado Watch', highSeverity: true, mediumSeverity: false, lowSeverity: false, desc: 'Vigilância de tornado emitida para toda a região metropolitana.' },
+        { date: '15 jul', type: 'Chuva Forte', highSeverity: false, mediumSeverity: true, lowSeverity: false, desc: 'Acumulado de 40mm em 3 horas, risco de alagamentos pontuais.' },
+      ],
+
+      mapLayers: [
+        { label: 'Radar', active: s.mapLayer === 'radar', notActive: s.mapLayer !== 'radar', select: () => this.setState({ mapLayer: 'radar' }) },
+        { label: 'Alertas', active: s.mapLayer === 'alertas', notActive: s.mapLayer !== 'alertas', select: () => this.setState({ mapLayer: 'alertas' }) },
+        { label: 'Locais', active: s.mapLayer === 'locais', notActive: s.mapLayer !== 'locais', select: () => this.setState({ mapLayer: 'locais' }) },
+      ],
+      mapHours: ['14h', '15h', '16h', '17h', '18h'].map((h) => ({
+        label: h, active: s.mapHour === h, notActive: s.mapHour !== h, select: () => this.setState({ mapHour: h }),
+      })),
+
+      emptyNoAlertsOn: s.emptyState === 'noAlerts', emptyNoAlertsOff: s.emptyState !== 'noAlerts',
+      emptyNoConnOn: s.emptyState === 'noConnection', emptyNoConnOff: s.emptyState !== 'noConnection',
+      emptyNoPermOn: s.emptyState === 'noPermission', emptyNoPermOff: s.emptyState !== 'noPermission',
+      setEmptyNoAlerts: () => this.setState({ emptyState: 'noAlerts' }),
+      setEmptyNoConn: () => this.setState({ emptyState: 'noConnection' }),
+      setEmptyNoPerm: () => this.setState({ emptyState: 'noPermission' }),
+    };
+  }
+}
+</script>
+</body>
+</html>

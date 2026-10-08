@@ -24,7 +24,7 @@ const RECOMMENDATIONS: Record<string, string[]> = {
   wind: ['Prenda objetos soltos do lado de fora', 'Evite estacionar sob árvores', 'Redobre a atenção ao dirigir'],
 };
 
-function inactiveAlert(): SevereAlert {
+export function inactiveAlert(): SevereAlert {
   return {
     active: false,
     type: '',

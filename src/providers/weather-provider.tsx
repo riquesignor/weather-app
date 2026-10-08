@@ -20,7 +20,6 @@ import {
   favoriteLocations as seedFavorites,
   hourlyDetailed as fallbackHourlyDetailed,
   hourlyForecast as fallbackHourlyForecast,
-  severeAlert as fallbackAlert,
   weatherDetails as fallbackWeatherDetails,
   type CurrentConditions,
   type DailyForecastPoint,
@@ -39,7 +38,7 @@ import {
   type GeocodingResult,
   type OpenMeteoForecastResponse,
 } from '@/services/open-meteo';
-import { deriveSevereAlert, findCurrentHourIndex } from '@/services/severe-alert';
+import { deriveSevereAlert, findCurrentHourIndex, inactiveAlert } from '@/services/severe-alert';
 import { transformForecast } from '@/services/weather-transform';
 import { toWeatherDetails } from '@/services/weather-details';
 import { useLocationPermission } from '@/hooks/use-location-permission';
@@ -67,6 +66,11 @@ type ActiveLocation = { id: string; name: string; latitude: number; longitude: n
 type WeatherContextValue = {
   status: 'loading' | 'ready' | 'error';
   errorMessage?: string;
+  /** `false` até a 1ª resposta real chegar — enquanto isso os campos abaixo são só
+   * placeholders de layout e as telas devem mostrar estado de carregamento/erro. */
+  hasData: boolean;
+  /** Momento (epoch ms) da última resposta real recebida, ou `null` se nunca houve. */
+  updatedAt: number | null;
   locationName: string;
   coordinates: Coordinates;
   current: CurrentConditions;
@@ -85,6 +89,11 @@ type WeatherContextValue = {
 
 const WeatherContext = createContext<WeatherContextValue | null>(null);
 
+/** Linha de favorito ainda sem dado da API — `temp: null` vira "Carregando…" na UI. */
+function pendingFavorite(f: ManualFavorite, current: boolean): FavoriteLocation {
+  return { ...f, temp: null, current, condition: 'cloudy', alertLabel: null };
+}
+
 function formatGeoName(result: GeocodingResult): string {
   const region = result.admin1 ?? result.country;
   return region && region !== result.name ? `${result.name}, ${region}` : result.name;
@@ -102,9 +111,14 @@ export function WeatherProvider({ children }: { children: ReactNode }) {
       .map((f) => ({ id: f.id, name: f.name, latitude: f.latitude, longitude: f.longitude }))
   );
 
+  // Os fallbacks do mock só servem de placeholder de layout enquanto `hasData` é false —
+  // as telas não os exibem como dado real. O alerta começa SEMPRE inativo: o mock tem um
+  // alerta ativo de exemplo que, se usado aqui, dispararia notificação falsa na abertura.
   const [weather, setWeather] = useState<{
     status: 'loading' | 'ready' | 'error';
     errorMessage?: string;
+    hasData: boolean;
+    updatedAt: number | null;
     current: CurrentConditions;
     hourlyForecast: HourlyPoint[];
     hourlyDetailed: HourlyDetail[];
@@ -113,15 +127,20 @@ export function WeatherProvider({ children }: { children: ReactNode }) {
     details: WeatherDetails;
   }>({
     status: 'loading',
+    hasData: false,
+    updatedAt: null,
     current: fallbackCurrentConditions,
     hourlyForecast: fallbackHourlyForecast,
     hourlyDetailed: fallbackHourlyDetailed,
-    alert: fallbackAlert,
+    alert: inactiveAlert(),
     dailyForecast: fallbackDailyForecast,
     details: fallbackWeatherDetails,
   });
 
-  const [favoritesData, setFavoritesData] = useState<FavoriteLocation[]>(seedFavorites);
+  const [favoritesData, setFavoritesData] = useState<FavoriteLocation[]>(() => [
+    pendingFavorite({ id: 'gps', name: 'Localização atual', latitude: 0, longitude: 0 }, true),
+    ...manualFavorites.map((f) => pendingFavorite(f, false)),
+  ]);
   const [attempt, setAttempt] = useState(0);
 
   const active: ActiveLocation = activeOverride ?? {
@@ -158,19 +177,15 @@ export function WeatherProvider({ children }: { children: ReactNode }) {
         }
 
         if (cancelled || requestId.current !== myRequest) return;
-        setWeather({ status: 'ready', ...transformed, details });
+        setWeather({ status: 'ready', hasData: true, updatedAt: Date.now(), ...transformed, details });
       } catch (error) {
         if (cancelled || requestId.current !== myRequest) return;
-        setWeather({
+        // Mantém o último dado real conhecido (se houver) — a UI avisa que está desatualizado.
+        setWeather((prev) => ({
+          ...prev,
           status: 'error',
           errorMessage: error instanceof Error ? error.message : 'Falha ao buscar previsão',
-          current: fallbackCurrentConditions,
-          hourlyForecast: fallbackHourlyForecast,
-          hourlyDetailed: fallbackHourlyDetailed,
-          alert: fallbackAlert,
-          dailyForecast: fallbackDailyForecast,
-          details: fallbackWeatherDetails,
-        });
+        }));
       }
     }
 
@@ -247,6 +262,8 @@ export function WeatherProvider({ children }: { children: ReactNode }) {
     () => ({
       status: weather.status,
       errorMessage: weather.errorMessage,
+      hasData: weather.hasData,
+      updatedAt: weather.updatedAt,
       locationName: active.name || fallbackLocation.name,
       coordinates: { latitude: active.latitude, longitude: active.longitude },
       current: weather.current,

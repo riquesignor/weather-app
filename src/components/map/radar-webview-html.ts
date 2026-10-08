@@ -95,7 +95,7 @@ export function buildMapHtml(): string {
   window.setPlaces = function (list) {
     placesLayer.clearLayers();
     (list || []).forEach(function (p) {
-      L.marker([p.lat, p.lon]).bindPopup(p.name + ' — ' + p.temp + '°').addTo(placesLayer);
+      L.marker([p.lat, p.lon]).bindPopup(p.temp == null ? p.name : p.name + ' — ' + p.temp + '°').addTo(placesLayer);
     });
   };
 

@@ -60,7 +60,6 @@ export default function LocationsScreen() {
         renderItem={({ item }) => (
           <Pressable
             onPress={() => {
-              if (item.current) return;
               selectLocation({ id: item.id, name: item.name, latitude: item.latitude, longitude: item.longitude });
               router.back();
             }}
@@ -78,7 +77,7 @@ export default function LocationsScreen() {
               <ThemedText type="smallBold">{item.name}</ThemedText>
               <View style={styles.rowMeta}>
                 <ThemedText type="small" themeColor="textSecondary">
-                  {item.current ? `Atual: ${item.temp}°` : item.temp > 0 ? `${item.temp}°` : 'Aguardando dados'}
+                  {item.temp === null ? 'Aguardando dados' : item.current ? `Atual: ${item.temp}°` : `${item.temp}°`}
                 </ThemedText>
                 {item.alertLabel ? (
                   <View style={styles.alertPill}>

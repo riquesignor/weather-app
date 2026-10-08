@@ -8,14 +8,14 @@ import type { OpenMeteoForecastResponse } from '@/services/open-meteo';
 import { deriveSevereAlert, findCurrentHourIndex } from '@/services/severe-alert';
 import { interpretWeatherCode } from '@/services/weather-codes';
 
-const HOURLY_STRIP_COUNT = 10;
+const HOURLY_STRIP_COUNT = 24;
 const HOURLY_DETAIL_COUNT = 6;
 const DAILY_COUNT = 7;
 const WEEKDAY_LABELS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 
-/** Limiares de rajada (km/h) usados só para colorir o badge "Risco de tornado" da
- * tela de previsão detalhada — a Open-Meteo não detecta tornados, é um proxy visual
- * a partir da rajada prevista, mantido para não quebrar o design original do card. */
+/** Limiares de rajada (km/h) do badge "Risco de rajadas" da tela de previsão
+ * detalhada. (O design original chamava isso de "risco de tornado", mas a Open-Meteo
+ * não detecta tornados — rotular assim apresentaria um proxy como dado real.) */
 function windGustToRiskLabel(gustKmh: number): SeverityLevel {
   if (gustKmh >= 70) return 'high';
   if (gustKmh >= 50) return 'moderate';
@@ -71,7 +71,7 @@ export function toHourlyDetailed(resp: OpenMeteoForecastResponse, startIndex: nu
       windKmh: Math.round(hourly.wind_speed_10m[i]),
       precipitation: Math.round(hourly.precipitation_probability[i]),
       hail: info.hail,
-      tornadoRisk: windGustToRiskLabel(gust),
+      gustRisk: windGustToRiskLabel(gust),
       condition: info.condition,
     });
   }

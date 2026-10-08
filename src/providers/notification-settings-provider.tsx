@@ -12,7 +12,7 @@ export type AlertVolume = 'baixa' | 'media' | 'alta';
 export type NotificationSettings = {
   notifSevero: boolean;
   notifGranizo: boolean;
-  notifTornado: boolean;
+  notifRajadasFortes: boolean;
   notifRajadas: boolean;
   volume: AlertVolume;
 };
@@ -20,7 +20,7 @@ export type NotificationSettings = {
 type NotificationSettingsContextValue = NotificationSettings & {
   setNotifSevero: (value: boolean) => void;
   setNotifGranizo: (value: boolean) => void;
-  setNotifTornado: (value: boolean) => void;
+  setNotifRajadasFortes: (value: boolean) => void;
   setNotifRajadas: (value: boolean) => void;
   setVolume: (value: AlertVolume) => void;
 };
@@ -30,7 +30,7 @@ const NotificationSettingsContext = createContext<NotificationSettingsContextVal
 export function NotificationSettingsProvider({ children }: { children: ReactNode }) {
   const [notifSevero, setNotifSevero] = useState(true);
   const [notifGranizo, setNotifGranizo] = useState(true);
-  const [notifTornado, setNotifTornado] = useState(true);
+  const [notifRajadasFortes, setNotifRajadasFortes] = useState(true);
   const [notifRajadas, setNotifRajadas] = useState(true);
   const [volume, setVolume] = useState<AlertVolume>('alta');
 
@@ -38,16 +38,16 @@ export function NotificationSettingsProvider({ children }: { children: ReactNode
     () => ({
       notifSevero,
       notifGranizo,
-      notifTornado,
+      notifRajadasFortes,
       notifRajadas,
       volume,
       setNotifSevero,
       setNotifGranizo,
-      setNotifTornado,
+      setNotifRajadasFortes,
       setNotifRajadas,
       setVolume,
     }),
-    [notifSevero, notifGranizo, notifTornado, notifRajadas, volume]
+    [notifSevero, notifGranizo, notifRajadasFortes, notifRajadas, volume]
   );
 
   return <NotificationSettingsContext.Provider value={value}>{children}</NotificationSettingsContext.Provider>;

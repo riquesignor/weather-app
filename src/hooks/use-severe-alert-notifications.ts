@@ -27,13 +27,15 @@ Notifications.setNotificationHandler({
 });
 
 export function useSevereAlertNotifications(): void {
-  const { alert } = useWeather();
+  const { alert, hasData } = useWeather();
   const prefs = useNotificationSettings();
   // "Episódio" do alerta (tipo + janela de validade) — evita reenviar a notificação a
   // cada re-fetch de previsão enquanto o mesmo risco continuar ativo.
   const lastNotifiedKey = useRef<string | null>(null);
 
   useEffect(() => {
+    // Só notifica com base em dado real da API — nunca no placeholder de carregamento.
+    if (!hasData) return;
     if (!alert.active) {
       lastNotifiedKey.current = null;
       return;
@@ -67,5 +69,5 @@ export function useSevereAlertNotifications(): void {
         // Ambiente sem suporte a notificações (ex.: preview web) — não deve derrubar o app.
       }
     })();
-  }, [alert, prefs]);
+  }, [alert, hasData, prefs]);
 }

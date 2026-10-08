@@ -25,8 +25,8 @@ export default function SettingsScreen() {
     setNotifSevero,
     notifGranizo,
     setNotifGranizo,
-    notifTornado,
-    setNotifTornado,
+    notifRajadasFortes,
+    setNotifRajadasFortes,
     notifRajadas,
     setNotifRajadas,
     volume,
@@ -48,8 +48,8 @@ export default function SettingsScreen() {
         <Section title="Notificações">
           <ToggleRow label="Alertas Severos" value={notifSevero} onValueChange={setNotifSevero} />
           <ToggleRow label="Avisos de Granizo" value={notifGranizo} onValueChange={setNotifGranizo} />
-          <ToggleRow label="Avisos de Tornado" value={notifTornado} onValueChange={setNotifTornado} />
-          <ToggleRow label="Avisos de Rajadas" value={notifRajadas} onValueChange={setNotifRajadas} last />
+          <ToggleRow label="Rajadas muito fortes (≥ 70 km/h)" value={notifRajadasFortes} onValueChange={setNotifRajadasFortes} />
+          <ToggleRow label="Ventos fortes (≥ 50 km/h)" value={notifRajadas} onValueChange={setNotifRajadas} last />
         </Section>
 
         <Card>

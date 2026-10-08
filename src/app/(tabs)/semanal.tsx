@@ -4,6 +4,7 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { LocationHeader } from '@/components/common/location-header';
+import { StaleDataNotice, WeatherGate } from '@/components/common/weather-status';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { BottomTabInset, Spacing } from '@/constants/theme';
@@ -16,7 +17,7 @@ export default function SemanalScreen() {
   const router = useRouter();
   const theme = useTheme();
   const insets = useSafeAreaInsets();
-  const { locationName, dailyForecast, status } = useWeather();
+  const { locationName, dailyForecast } = useWeather();
 
   // Maior/menor temperatura da semana — usados pra escalar a barra min→max de cada linha.
   const weekMin = Math.min(...dailyForecast.map((d) => d.tempMin));
@@ -30,31 +31,29 @@ export default function SemanalScreen() {
         onPressLocation={() => router.push('/locations')}
         onPressSettings={() => router.push('/settings')}
       />
-      <ScrollView
-        contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + BottomTabInset + Spacing.three }]}
-        showsVerticalScrollIndicator={false}>
-        <ThemedText type="small" themeColor="textSecondary" style={styles.sectionTitle}>
-          PRÓXIMOS {dailyForecast.length} DIAS
-        </ThemedText>
-
-        {status === 'error' ? (
-          <ThemedText type="small" themeColor="textSecondary" style={styles.notice}>
-            Não foi possível atualizar a previsão agora — mostrando os últimos dados conhecidos.
+      <WeatherGate>
+        <ScrollView
+          contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + BottomTabInset + Spacing.three }]}
+          showsVerticalScrollIndicator={false}>
+          <ThemedText type="small" themeColor="textSecondary" style={styles.sectionTitle}>
+            PRÓXIMOS {dailyForecast.length} DIAS
           </ThemedText>
-        ) : null}
 
-        <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          {dailyForecast.map((day, index) => (
-            <DayRow
-              key={day.date || day.dayLabel}
-              day={day}
-              last={index === dailyForecast.length - 1}
-              weekMin={weekMin}
-              weekRange={weekRange}
-            />
-          ))}
-        </View>
-      </ScrollView>
+          <StaleDataNotice style={styles.notice} />
+
+          <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            {dailyForecast.map((day, index) => (
+              <DayRow
+                key={day.date || day.dayLabel}
+                day={day}
+                last={index === dailyForecast.length - 1}
+                weekMin={weekMin}
+                weekRange={weekRange}
+              />
+            ))}
+          </View>
+        </ScrollView>
+      </WeatherGate>
     </ThemedView>
   );
 }
@@ -118,7 +117,7 @@ const styles = StyleSheet.create({
     paddingLeft: Spacing.one,
   },
   notice: {
-    paddingHorizontal: Spacing.one,
+    marginHorizontal: 0,
     marginBottom: Spacing.one,
   },
   card: {

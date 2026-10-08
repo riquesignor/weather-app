@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { SevereAlertBanner } from '@/components/alert/severe-alert-banner';
 import { LocationHeader } from '@/components/common/location-header';
+import { StaleDataNotice, WeatherGate } from '@/components/common/weather-status';
 import { ThemedView } from '@/components/themed-view';
 import { CurrentWeatherCard } from '@/components/weather/current-weather-card';
 import { HourlyStrip } from '@/components/weather/hourly-strip';
@@ -25,21 +26,24 @@ export default function HojeScreen() {
         onPressLocation={() => router.push('/locations')}
         onPressSettings={() => router.push('/settings')}
       />
-      <ScrollView
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + BottomTabInset + Spacing.three }]}
-        showsVerticalScrollIndicator={false}>
-        <CurrentWeatherCard
-          temp={current.temp}
-          condition={current.condition}
-          conditionKind={current.conditionKind}
-          feelsLike={current.feelsLike}
-          humidity={current.humidity}
-          windKmh={current.windKmh}
-        />
-        <SevereAlertBanner alert={alert} expanded={alertExpanded} onToggle={() => setAlertExpanded((v) => !v)} />
-        <HourlyStrip data={hourlyForecast} onPressDetails={() => router.push('/hourly')} />
-        <WeatherDetailsGrid details={details} />
-      </ScrollView>
+      <WeatherGate>
+        <ScrollView
+          contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + BottomTabInset + Spacing.three }]}
+          showsVerticalScrollIndicator={false}>
+          <StaleDataNotice />
+          <CurrentWeatherCard
+            temp={current.temp}
+            condition={current.condition}
+            conditionKind={current.conditionKind}
+            feelsLike={current.feelsLike}
+            humidity={current.humidity}
+            windKmh={current.windKmh}
+          />
+          <SevereAlertBanner alert={alert} expanded={alertExpanded} onToggle={() => setAlertExpanded((v) => !v)} />
+          <HourlyStrip data={hourlyForecast} onPressDetails={() => router.push('/hourly')} />
+          <WeatherDetailsGrid details={details} />
+        </ScrollView>
+      </WeatherGate>
     </ThemedView>
   );
 }

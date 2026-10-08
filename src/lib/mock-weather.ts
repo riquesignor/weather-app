@@ -4,9 +4,9 @@
  * A Fase 2 (integração de API real, ver docs/weather_app_project_spec.md §6) chegou:
  * os dados ao vivo vêm agora de `@/providers/weather-provider` (Open-Meteo), que produz
  * exatamente os tipos abaixo via `@/services/weather-transform`. Os componentes de UI
- * não sabem a diferença. As constantes abaixo (`currentConditions`, `severeAlert`, etc.)
- * seguem existindo como fallback: usadas enquanto a primeira resposta da API não chega,
- * ou se a chamada de rede falhar completamente (ver `WeatherProvider`).
+ * não sabem a diferença. As constantes abaixo (`currentConditions`, `dailyForecast`, etc.)
+ * seguem existindo só como placeholder de layout antes da 1ª resposta — as telas não as
+ * exibem como dado real (ver `hasData` no `WeatherProvider` e `components/common/weather-status`).
  */
 import type { WeatherCondition } from '@/lib/weather-icons';
 
@@ -39,7 +39,8 @@ export type FavoriteLocation = {
   name: string;
   latitude: number;
   longitude: number;
-  temp: number;
+  /** `null` enquanto a API ainda não respondeu para este ponto. */
+  temp: number | null;
   current: boolean;
   condition: WeatherCondition;
   alertLabel: string | null;
@@ -65,20 +66,7 @@ export const currentConditions: CurrentConditions = {
   windKmh: 18,
 };
 
-export const severeAlert: SevereAlert = {
-  active: true,
-  type: 'Aviso de Tornado',
-  title: 'Tornado Watch Ativo',
-  level: 'high',
-  levelLabel: 'Alto',
-  validFrom: '14:30',
-  validTo: '17:30',
-  probability: 85,
-  windKmh: 70,
-  hail: true,
-  radiusKm: 30,
-  recommendations: ['Evite áreas abertas', 'Prenda objetos soltos', 'Procure abrigo interno'],
-};
+
 
 export const hourlyForecast: HourlyPoint[] = [
   { time: 'Agora', temp: 31, precipitation: 20, condition: 'cloudy' },
@@ -101,18 +89,19 @@ export type HourlyDetail = {
   windKmh: number;
   precipitation: number;
   hail: boolean;
-  tornadoRisk: SeverityLevel;
+  /** Proxy a partir da rajada prevista (ver `weather-transform#windGustToRiskLabel`). */
+  gustRisk: SeverityLevel;
   condition: WeatherCondition;
 };
 
 /** Previsão hora-a-hora detalhada (spec §2.3) — série independente do resumo do card Hoje. */
 export const hourlyDetailed: HourlyDetail[] = [
-  { rangeLabel: '13:00 → 14:00', temp: 29, feelsLike: 35, humidity: 70, windKmh: 35, precipitation: 40, hail: true, tornadoRisk: 'high', condition: 'cloudy' },
-  { rangeLabel: '14:00 → 15:00', temp: 28, feelsLike: 33, humidity: 72, windKmh: 38, precipitation: 55, hail: true, tornadoRisk: 'high', condition: 'cloudy' },
-  { rangeLabel: '15:00 → 16:00', temp: 26, feelsLike: 30, humidity: 74, windKmh: 32, precipitation: 45, hail: false, tornadoRisk: 'moderate', condition: 'cloudy' },
-  { rangeLabel: '16:00 → 17:00', temp: 25, feelsLike: 27, humidity: 68, windKmh: 24, precipitation: 30, hail: false, tornadoRisk: 'moderate', condition: 'partlyCloudy' },
-  { rangeLabel: '17:00 → 18:00', temp: 24, feelsLike: 25, humidity: 60, windKmh: 16, precipitation: 15, hail: false, tornadoRisk: 'low', condition: 'partlyCloudy' },
-  { rangeLabel: '18:00 → 19:00', temp: 22, feelsLike: 22, humidity: 58, windKmh: 12, precipitation: 5, hail: false, tornadoRisk: 'low', condition: 'clear' },
+  { rangeLabel: '13:00 → 14:00', temp: 29, feelsLike: 35, humidity: 70, windKmh: 35, precipitation: 40, hail: true, gustRisk: 'high', condition: 'cloudy' },
+  { rangeLabel: '14:00 → 15:00', temp: 28, feelsLike: 33, humidity: 72, windKmh: 38, precipitation: 55, hail: true, gustRisk: 'high', condition: 'cloudy' },
+  { rangeLabel: '15:00 → 16:00', temp: 26, feelsLike: 30, humidity: 74, windKmh: 32, precipitation: 45, hail: false, gustRisk: 'moderate', condition: 'cloudy' },
+  { rangeLabel: '16:00 → 17:00', temp: 25, feelsLike: 27, humidity: 68, windKmh: 24, precipitation: 30, hail: false, gustRisk: 'moderate', condition: 'partlyCloudy' },
+  { rangeLabel: '17:00 → 18:00', temp: 24, feelsLike: 25, humidity: 60, windKmh: 16, precipitation: 15, hail: false, gustRisk: 'low', condition: 'partlyCloudy' },
+  { rangeLabel: '18:00 → 19:00', temp: 22, feelsLike: 22, humidity: 58, windKmh: 12, precipitation: 5, hail: false, gustRisk: 'low', condition: 'clear' },
 ];
 
 export const favoriteLocations: FavoriteLocation[] = [
@@ -124,7 +113,7 @@ export const favoriteLocations: FavoriteLocation[] = [
     temp: 31,
     current: true,
     condition: 'cloudy',
-    alertLabel: 'Tornado Watch',
+    alertLabel: null,
   },
   {
     id: '2',

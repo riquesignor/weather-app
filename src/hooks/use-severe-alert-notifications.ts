@@ -8,17 +8,21 @@
  * (Firebase/APNs), infraestrutura descartada antes por ser desproporcional ao escopo
  * deste projeto. Ainda assim cobre o caso mais comum (app rodando em background
  * enquanto o usuário usa o celular pra outra coisa).
+ *
+ * Atualização: com o NotificationHub configurado, o push com app fechado existe
+ * (`use-push-registration.ts` + vigia no servidor). Nesse caso este aviso local é
+ * desligado (`enabled: false`) para o usuário não receber o mesmo alerta duas vezes.
  */
 import * as Notifications from 'expo-notifications';
 import { useEffect, useRef } from 'react';
 
 import { useNotificationSettings } from '@/providers/notification-settings-provider';
 import { useWeather } from '@/providers/weather-provider';
-import { shouldNotifyForAlert } from '@/services/severe-alert-notifications';
+import { ALERTS_ROUTE } from '@/services/push-subscription';
+import { buildAlertNotification, shouldNotifyForAlert } from '@/services/severe-alert-notifications';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: false,
     shouldShowBanner: true,
@@ -26,22 +30,24 @@ Notifications.setNotificationHandler({
   }),
 });
 
-export function useSevereAlertNotifications(): void {
-  const { alert, hasData } = useWeather();
+export function useSevereAlertNotifications({ enabled }: { enabled: boolean }): void {
+  const { alert, hasData, locationName } = useWeather();
   const prefs = useNotificationSettings();
-  // "Episódio" do alerta (tipo + janela de validade) — evita reenviar a notificação a
-  // cada re-fetch de previsão enquanto o mesmo risco continuar ativo.
+  // "Episódio" do alerta (tipo + dia) — evita reenviar a notificação a cada re-fetch
+  // enquanto o mesmo risco continuar ativo. Não usa a janela de validade: ela anda
+  // junto com o relógio (começa sempre na hora atual) e repetiria o aviso toda hora.
+  // Mesma regra do push do servidor (1 por tipo por dia — ver server/plan-notifications).
   const lastNotifiedKey = useRef<string | null>(null);
 
   useEffect(() => {
     // Só notifica com base em dado real da API — nunca no placeholder de carregamento.
-    if (!hasData) return;
+    if (!hasData || !enabled) return;
     if (!alert.active) {
       lastNotifiedKey.current = null;
       return;
     }
 
-    const key = `${alert.type}-${alert.validFrom}-${alert.validTo}`;
+    const key = `${alert.type}-${new Date().toDateString()}`;
     if (lastNotifiedKey.current === key) return;
     if (!shouldNotifyForAlert(alert, prefs)) return;
 
@@ -57,10 +63,12 @@ export function useSevereAlertNotifications(): void {
         }
         if (!granted) return;
 
+        const { title, body } = buildAlertNotification(alert, locationName);
         await Notifications.scheduleNotificationAsync({
           content: {
-            title: `⚠️ ${alert.type}`,
-            body: `${alert.title} · válido ${alert.validFrom}–${alert.validTo}`,
+            title,
+            body,
+            data: { route: ALERTS_ROUTE },
             sound: prefs.volume === 'baixa' ? undefined : 'default',
           },
           trigger: null,
@@ -69,5 +77,5 @@ export function useSevereAlertNotifications(): void {
         // Ambiente sem suporte a notificações (ex.: preview web) — não deve derrubar o app.
       }
     })();
-  }, [alert, hasData, prefs]);
+  }, [alert, hasData, enabled, locationName, prefs]);
 }

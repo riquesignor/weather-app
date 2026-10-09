@@ -1,0 +1,9 @@
+{
+  // Vigia de clima (Node, roda no GitHub Actions) — tipos do Node só aqui, fora do app.
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": ["node"]
+  },
+  "include": ["./**/*.ts"],
+  "exclude": []
+}

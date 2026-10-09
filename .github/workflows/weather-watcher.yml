@@ -1,0 +1,36 @@
+# Vigia de clima: a cada 30 min avalia a previsão dos aparelhos inscritos e
+# pede ao NotificationHub o push dos alertas severos (chega com o app fechado).
+#
+# Configure em Settings → Secrets and variables → Actions:
+#   Secrets:   HUB_URL         URL pública do NotificationHub (ex.: https://meu-hub.onrender.com)
+#              HUB_SECRET_KEY  chave SECRETA da app "sereno" no hub
+#   Variables: WATCHER_ENABLED = true   (liga o agendamento; sem ela o job nem inicia,
+#                                        para não gastar minutos de Actions à toa)
+name: Weather watcher
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: weather-watcher
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    if: ${{ vars.WATCHER_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run test:watcher
+      - run: npm run watcher
+        env:
+          HUB_URL: ${{ secrets.HUB_URL }}
+          HUB_SECRET_KEY: ${{ secrets.HUB_SECRET_KEY }}

@@ -1,11 +1,15 @@
 /**
  * Preferências de notificação (tela Configurações) — extraídas do `useState` local que
  * settings.tsx tinha antes pra virar um Context, porque agora elas precisam ser lidas
- * de fora da tela de Configurações também: `use-severe-alert-notifications.ts` (que
- * dispara a notificação de verdade) precisa saber se o usuário quer ou não ser avisado
- * de cada tipo de alerta.
+ * de fora da tela de Configurações também: `use-severe-alert-notifications.ts` (aviso
+ * local) e `use-push-registration.ts` (envia as preferências ao NotificationHub, para
+ * o vigia de clima respeitá-las no push com o app fechado).
+ *
+ * Persistidas em AsyncStorage: sobrevivem a reinícios do app.
  */
-import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+
+import { loadJson, saveJson } from '@/lib/storage';
 
 export type AlertVolume = 'baixa' | 'media' | 'alta';
 
@@ -18,6 +22,8 @@ export type NotificationSettings = {
 };
 
 type NotificationSettingsContextValue = NotificationSettings & {
+  /** `false` até as preferências salvas terminarem de carregar. */
+  hydrated: boolean;
   setNotifSevero: (value: boolean) => void;
   setNotifGranizo: (value: boolean) => void;
   setNotifRajadasFortes: (value: boolean) => void;
@@ -25,30 +31,54 @@ type NotificationSettingsContextValue = NotificationSettings & {
   setVolume: (value: AlertVolume) => void;
 };
 
+const STORAGE_KEY = 'sereno.notificationSettings';
+
+const DEFAULTS: NotificationSettings = {
+  notifSevero: true,
+  notifGranizo: true,
+  notifRajadasFortes: true,
+  notifRajadas: true,
+  volume: 'alta',
+};
+
 const NotificationSettingsContext = createContext<NotificationSettingsContextValue | null>(null);
 
 export function NotificationSettingsProvider({ children }: { children: ReactNode }) {
-  const [notifSevero, setNotifSevero] = useState(true);
-  const [notifGranizo, setNotifGranizo] = useState(true);
-  const [notifRajadasFortes, setNotifRajadasFortes] = useState(true);
-  const [notifRajadas, setNotifRajadas] = useState(true);
-  const [volume, setVolume] = useState<AlertVolume>('alta');
+  const [settings, setSettings] = useState<NotificationSettings>(DEFAULTS);
+  const [hydrated, setHydrated] = useState(false);
 
-  const value = useMemo<NotificationSettingsContextValue>(
-    () => ({
-      notifSevero,
-      notifGranizo,
-      notifRajadasFortes,
-      notifRajadas,
-      volume,
-      setNotifSevero,
-      setNotifGranizo,
-      setNotifRajadasFortes,
-      setNotifRajadas,
-      setVolume,
-    }),
-    [notifSevero, notifGranizo, notifRajadasFortes, notifRajadas, volume]
-  );
+  useEffect(() => {
+    let cancelled = false;
+    loadJson<Partial<NotificationSettings>>(STORAGE_KEY).then((stored) => {
+      if (cancelled) return;
+      // Merge com os padrões: chaves novas (de versões futuras) ganham o default.
+      if (stored) setSettings((prev) => ({ ...prev, ...stored }));
+      setHydrated(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (hydrated) saveJson(STORAGE_KEY, settings);
+  }, [settings, hydrated]);
+
+  const value = useMemo<NotificationSettingsContextValue>(() => {
+    const set =
+      <K extends keyof NotificationSettings>(key: K) =>
+      (value: NotificationSettings[K]) =>
+        setSettings((prev) => ({ ...prev, [key]: value }));
+    return {
+      ...settings,
+      hydrated,
+      setNotifSevero: set('notifSevero'),
+      setNotifGranizo: set('notifGranizo'),
+      setNotifRajadasFortes: set('notifRajadasFortes'),
+      setNotifRajadas: set('notifRajadas'),
+      setVolume: set('volume'),
+    };
+  }, [settings, hydrated]);
 
   return <NotificationSettingsContext.Provider value={value}>{children}</NotificationSettingsContext.Provider>;
 }

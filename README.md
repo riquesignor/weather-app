@@ -59,7 +59,8 @@ src/
 ├── providers/      # Estado global via Context (clima, tema, notificações)
 ├── services/       # Lógica pura: cliente HTTP, transformações, heurísticas
 ├── hooks/          # Localização, notificações, diário da horta
-└── lib/            # Tipos de domínio e ícones
+└── lib/            # Tipos de domínio, ícones e persistência
+server/             # Vigia de clima (Node), roda agendado no GitHub Actions
 ```
 
 O fluxo de dados é de mão única:
@@ -67,6 +68,43 @@ O fluxo de dados é de mão única:
 ```
 GPS (expo-location) → open-meteo.ts (fetch) → weather-transform.ts (tipos de domínio) → WeatherProvider → telas
 ```
+
+## Alertas com o app fechado
+
+Notificação local só funciona com o app aberto ou em segundo plano. Para o
+alerta chegar com o app **fechado**, o Sereno se integra ao
+[NotificationHub](https://github.com/riquesignor/NotificationHub), um serviço
+de notificações genérico (C# / .NET) feito por mim e usado também por outros
+projetos:
+
+```
+App Sereno ──(chave pública)──► NotificationHub ◄──(chave secreta)── Vigia de clima (GitHub Actions, 30/30 min)
+ registra aparelho + atributos       │   guarda aparelhos,              lista aparelhos, consulta a Open-Meteo
+ (ponto ~1 km e preferências)        │   envia via Expo Push            por ponto e envia só quem tem alerta novo
+                                     ▼
+                              push no celular ──► toque abre a aba Alertas
+```
+
+- O vigia usa **a mesma heurística do app** (`severe-alert.ts`), importando o
+  mesmo código. Push e tela nunca discordam.
+- **1 push por tipo de alerta por dia**, via chave de idempotência no hub.
+- O app não tem login: cada instalação recebe um **UUID aleatório**. A
+  localização vai arredondada (~1 km), e nada é enviado se "Alertas Severos"
+  estiver desligado.
+- Sem o hub configurado, tudo isso fica desligado e o app volta à notificação
+  local, sem nenhuma diferença para quem só quer rodar o projeto.
+
+**Para ativar:**
+1. Suba o NotificationHub com uma app `sereno` em `ClientApps` (chaves pública
+   e secreta; ver o `docs/deployment.md` dele).
+2. No app, crie `.env.local` a partir de [`.env.example`](.env.example) com a
+   URL e a **chave pública**.
+3. No GitHub, em *Settings → Secrets and variables → Actions*, crie os secrets
+   `HUB_URL` e `HUB_SECRET_KEY` e a variável `WATCHER_ENABLED=true`. O workflow
+   [`weather-watcher.yml`](.github/workflows/weather-watcher.yml) passa a rodar
+   a cada 30 min (também dá para disparar à mão).
+4. Gere um *development build* (`npx eas build --profile development`). No
+   Android, o Expo Go não recebe push remoto desde o SDK 53.
 
 ## Decisões técnicas
 
@@ -92,6 +130,12 @@ npx expo start
 
 Escaneie o QR code com o Expo Go. O mapa usa WebView e por isso só funciona no app nativo, não no preview web.
 
+Testes do vigia de clima (Node, sem rede):
+
+```bash
+npm run test:watcher
+```
+
 Para gerar um APK instalável com [EAS Build](https://docs.expo.dev/build/introduction/):
 
 ```bash
@@ -100,17 +144,19 @@ npx eas build --platform android --profile preview
 
 ## Limitações conhecidas
 
-- Notificações são **locais**: disparam com o app aberto ou em segundo plano, não com ele fechado (isso exigiria um servidor de push).
-- Favoritos, preferências e o diário da horta ainda ficam **só em memória** e se perdem ao fechar o app.
+- Sem o NotificationHub configurado, as notificações são só **locais** (app aberto ou em segundo plano).
+- O push com app fechado avisa sobre a localização **exibida no app** na última vez que ele foi aberto.
+- Favoritos, tema e o diário da horta ainda ficam **só em memória** (as preferências de notificação já são salvas).
 - O raio do alerta no mapa é um valor fixo, porque a API não fornece dado espacial do evento.
 
 ## Próximos passos
 
-- [ ] Persistir favoritos e preferências (AsyncStorage / MMKV) com cache *stale-while-revalidate*
+- [x] Alertas por push com o app fechado (NotificationHub + vigia agendado)
+- [ ] Persistir favoritos e tema, com cache *stale-while-revalidate* da previsão
 - [ ] Gráfico de temperatura das próximas 24h e card de nascer/pôr do sol
 - [ ] Fundo dinâmico conforme o clima e a hora do dia
 - [ ] Unidades °C/°F
-- [ ] Testes unitários dos serviços e CI no GitHub Actions
+- [ ] Testes unitários dos demais serviços e CI de lint/tipos no GitHub Actions
 
 ## Licença
 
